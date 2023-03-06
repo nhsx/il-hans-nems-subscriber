@@ -5,6 +5,17 @@ Description: >
 
   Sample SAM Template for nems-subscriber
 
+Parameters:
+  pds_jwt_aud:
+    Type: String
+    Default: "https://int.api.service.nhs.uk/oauth2/token"
+  pds_jwt_kid:
+    Type: String
+    Default: "int-1"
+  pds_base_url:
+    Type: String
+    Default: "https://int.api.service.nhs.uk/oauth2/token"
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -28,6 +39,15 @@ Resources:
           Properties:
             Path: /manage_subscription
             Method: post
+      Environment:
+        Variables:
+          PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:ssm:/il-hans-nems-subscriber/pds-jwt-rsa-private-key}}"
+          PDS_JWT_SUB: "{{resove:ssm:/il-hans-nems-subscriber/api-key}}"
+          PDS_JWT_ISS: "{{resove:ssm:/il-hans-nems-subscriber/api-key}}"
+          PDS_API_KEY: "{{resove:ssm:/il-hans-nems-subscriber/api-key}}"
+          PDS_JWT_AUD: !Ref pds_jwt_aud
+          PDS_JWKS_KID: !Ref pds_jwks_kid
+          PDS_BASE_URL: !Ref pds_base_url
   NEMSSubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
