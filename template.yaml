@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  nems-subscriber
+
+  Sample SAM Template for nems-subscriber
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+# AWS SAM Spec is here: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+Resources:
+  NEMSSubscriptionCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/nems_subscription_create/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Description: Lambda function that creates a NEMS subscription for a given CareRecipient
+      Architectures:
+        - x86_64
+      Events:
+        NEMSSubscriptionCreate:
+          Type: Api 
+          Properties:
+            Path: /manage_subscription
+            Method: post
+  NEMSSubscriptionDeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/nems_subscription_delete/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Description: Lambda function that deletes a NEMS subscription for a given CareRecipient
+      Architectures:
+        - x86_64
+      Events:
+        NEMSSubscriptionDelete:
+          Type: Api
+          Properties: 
+            Path: /manage_subscription
+            Method: delete
+  MESHCheckMailboxFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/mesh_mailbox_read/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Description: Lambda function that reads messages from the MESH mailbox and places them onto a queue
+      Architectures:
+        - x86_64
+      Events:
+        MESHMailboxPoll:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+            Name: MESH-mailbox-polling
+            Description: Triggers this read function every 5 minutes in line with MESH specification
+            Enabled: True
+  UnprocessedMessageQueue:
+    Type: AWS::SQS::Queue
+  EmailCareProviderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/email_care_provider
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Description: Lambda function that processes messages from the queue and sends emails to care providers
+      Architectures:
+        - x86_64
+      Events:
+        NewUnprocessedMessage:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt UnprocessedMessageQueue.Arn
+            BatchSize: 10
+            Enabled: True
+    DeadLetterQueue:
+      Type: SQS
+      TargetArn: !GetAtt DeadLetterQueue.Arn
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ManageAPI:
+    Description: "API Gateway endpoint URL for Prod stage for Create NEMS Subscription function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/manage_subscription"
+  NEMSSubscriptionCreateFunction:
+    Description: "NEMS Subscription Create Lambda Function ARN"
+    Value: !GetAtt NEMSSubscriptionCreateFunction.Arn
+  NEMSSubscriptionCreateFunctionIamRole:
+    Description: "Implicit IAM Role created for NEMS Subscription Create function"
+    Value: !GetAtt NEMSSubscriptionCreateFunctionRole.Arn
+  NEMSSubscriptionDeleteFunction:
+    Description: "NEMS Subscription Delete Lambda Function ARN"
+    Value: !GetAtt NEMSSubscriptionDeleteFunction.Arn
+  NEMSSubscriptionDeleteFunctionIamRole:
+    Description: "Implicit IAM Role created for NEMS Subscription Delete function"
+    Value: !GetAtt NEMSSubscriptionDeleteFunctionRole.Arn
+  MESHCheckMailboxFunction:
+    Description: "MESH Check Mailbox Lambda Function ARN"
+    Value: !GetAtt EmailCareProviderFunction.Arn
+  MESHCheckMailboxFunctionIamRole:
+    Description: "Implicit IAM Role created for MESH Check Mailbox function"
+    Value: !GetAtt EmailCareProviderFunctionRole.Arn
+  EmailCareProviderFunction:
+    Description: "Email Care Provider Lambda Function ARN"
+    Value: !GetAtt EmailCareProviderFunction.Arn
+  EmailCareProviderFunctionIamRole:
+    Description: "Implicit IAM Role created for Email Care Provider function"
+    Value: !GetAtt EmailCareProviderFunctionRole.Arn
