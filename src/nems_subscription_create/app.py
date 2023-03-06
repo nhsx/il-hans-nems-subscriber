@@ -1,5 +1,7 @@
 import json
 
+from external_integrations.pds.settings import PDS_SETTINGS
+
 
 # import requests
 
@@ -36,10 +38,5 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 200,
-        "body": json.dumps(
-            {
-                "message": "hello world",
-                # "location": ip.text.replace("\n", "")
-            }
-        ),
+        "body": json.dumps({"message": "hello world"}),
     }
