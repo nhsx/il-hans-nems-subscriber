@@ -1,20 +1,14 @@
-FROM python:3.10-slim-buster
+FROM python:3.10.2-slim-bullseye
 
-# Open http port
-EXPOSE 8000
-
-ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV DEBIAN_FRONTEND noninteractive
+ENV PYTHONUNBUFFERED 1
 
-# Install pip and gunicorn web server
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install gunicorn==20.1.0
+WORKDIR /hans_subscriber
 
-# Install requirements.txt
-COPY requirements.txt /
-RUN pip install --no-cache-dir -r /requirements.txt
+# Install dependencies
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
-# Moving application files
-WORKDIR /app
-COPY . /app
+# Copy project
+COPY . .
