@@ -22,8 +22,10 @@ class PDSSettings(BaseSettings):
     class Config:
         env_prefix = "PDS_"
 
-    @validator("jwt_rsa_private_key")
+    @validator("jwt_rsa_private_key", pre=True)
     def _decode_jwt_rsa_private_key_if_encoded(cls, v: str):
+        if "-----BEGIN RSA PRIVATE KEY-----" in v:
+            return v
         try:
             return base64.b64decode(v)
         except ValueError:

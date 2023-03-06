@@ -15,16 +15,16 @@ from settings import PDS_SETTINGS
 
 class PDSApiClient:
     def __init__(
-            self,
-            base_url: Optional[HttpUrl] = None,
-            session: Optional[requests.Session] = None,
+        self,
+        base_url: Optional[HttpUrl] = None,
+        session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
         self.base_url: HttpUrl = base_url or PDS_SETTINGS.base_url
         self._access_token = None
         self._access_token_expires_at = None
 
-    def get_patient_details(self, nhs_number: str):
+    def get_patient_details(self, nhs_number: str) -> PatientDetailsResponse:
         url = f"{self.base_url}/personal-demographics/FHIR/R4/Patient/{nhs_number}"
         headers = {
             "Authorization": f"Bearer {self._get_valid_access_token()}",
@@ -47,8 +47,8 @@ class PDSApiClient:
 
     def _get_valid_access_token(self):
         if (
-                self._access_token_expires_at is not None
-                and self._access_token_expires_at > datetime.utcnow()
+            self._access_token_expires_at is not None
+            and self._access_token_expires_at > datetime.utcnow()
         ):
             return self._access_token
 
