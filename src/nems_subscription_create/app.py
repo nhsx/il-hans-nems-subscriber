@@ -1,45 +1,31 @@
-import json
+from uuid import uuid4
+
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities.typing import LambdaContext
+from fhir.resources.patient import Patient
+
+from controllers.exceptions import (
+    NameMissmatchError,
+    BirthDateMissmatchError,
+    NotOKResponseFromPDSError,
+)
+from controllers.verify_patient import VerifyPatientController
+
+_LOGGER = Logger()
 
 
-# import requests
-
-
-def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(
-            {
-                "message": "hello world",
-                # "location": ip.text.replace("\n", "")
-            }
-        ),
-    }
+@_LOGGER.inject_lambda_context(log_event=True)
+def lambda_handler(event: dict, context: LambdaContext):
+    patient = Patient.parse_raw(event["body"])
+    try:
+        VerifyPatientController().verify_patient_data(
+            nhs_number=patient.identifier[0].value,
+            family_name=patient.name[0].family,
+            given_name=patient.name[0].given,
+            birth_date=patient.birthDate,
+        )
+    except NotOKResponseFromPDSError:
+        return {"statusCode": 502}
+    except (NameMissmatchError, BirthDateMissmatchError):
+        return {"statusCode": 404}
+    return {"statusCode": 201, "headers": {"X-Subscription-Id": str(uuid4())}}
