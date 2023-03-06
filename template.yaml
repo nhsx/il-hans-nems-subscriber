@@ -24,7 +24,7 @@ Resources:
         - x86_64
       Events:
         NEMSSubscriptionCreate:
-          Type: Api 
+          Type: Api
           Properties:
             Path: /manage_subscription
             Method: post
@@ -40,7 +40,7 @@ Resources:
       Events:
         NEMSSubscriptionDelete:
           Type: Api
-          Properties: 
+          Properties:
             Path: /manage_subscription
             Method: delete
   MESHCheckMailboxFunction:
