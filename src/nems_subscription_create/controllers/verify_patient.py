@@ -22,6 +22,7 @@ class VerifyPatientController:
         given_name: Sequence[str],
         birth_date: date
     ) -> None:
+        # TODO: Prevent timing-based attacks
         try:
             patient_details = self.pds_api_client.get_patient_details(nhs_number)
         except InvalidResponseError:
