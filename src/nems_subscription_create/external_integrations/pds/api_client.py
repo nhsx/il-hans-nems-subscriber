@@ -4,13 +4,17 @@ from typing import Optional
 
 import jwt
 import requests
+from aws_lambda_powertools import Logger
 from pydantic import HttpUrl
 
-from schemas import (
-    AccessTokenResponse,
+from external_integrations.pds.exceptions import InvalidResponseError
+from external_integrations.pds.schemas import (
     PatientDetailsResponse,
+    AccessTokenResponse,
 )
-from settings import PDS_SETTINGS
+from external_integrations.pds.settings import PDS_SETTINGS
+
+_LOGGER = Logger()
 
 
 class PDSApiClient:
@@ -31,6 +35,10 @@ class PDSApiClient:
             "X-Request-ID": str(uuid.uuid4()),
         }
         response = requests.get(url=url, headers=headers)
+        if response.status_code != 200:
+            _LOGGER.warning({"response_text": response.text})
+            raise InvalidResponseError
+
         response_json = response.json()
         return PatientDetailsResponse(**response_json)
 
@@ -43,6 +51,10 @@ class PDSApiClient:
             "client_assertion": encoded_jwt,
         }
         response = requests.post(url, headers=headers, data=data)
+        if response.status_code != 200:
+            _LOGGER.warning({"response_text": response.text})
+            raise InvalidResponseError
+
         return AccessTokenResponse(**response.json())
 
     def _get_valid_access_token(self):

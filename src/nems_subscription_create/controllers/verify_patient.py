@@ -1,10 +1,13 @@
 from datetime import date
 from typing import Optional, Sequence, Tuple
 
-from exceptions import NameMissmatch, BirthDateMissmatch
-from src.nems_subscription_create.external_integrations.pds.api_client import (
-    PDSApiClient,
+from controllers.exceptions import (
+    NameMissmatchError,
+    BirthDateMissmatchError,
+    NotOKResponseFromPDSError,
 )
+from external_integrations.pds.api_client import PDSApiClient
+from external_integrations.pds.exceptions import InvalidResponseError
 
 
 class VerifyPatientController:
@@ -19,15 +22,25 @@ class VerifyPatientController:
         given_name: Sequence[str],
         birth_date: date
     ) -> None:
-        patient_details = self.pds_api_client.get_patient_details(nhs_number)
-        if not self._do_names_match(
-            family_names=(family_name, patient_details.name.family),
-            given_names=(given_name, patient_details.name.given),
-        ):
-            raise NameMissmatch
+        try:
+            patient_details = self.pds_api_client.get_patient_details(nhs_number)
+        except InvalidResponseError:
+            raise NotOKResponseFromPDSError
 
         if not birth_date == patient_details.birthDate:
-            raise BirthDateMissmatch
+            raise BirthDateMissmatchError
+
+        if not self._do_names_match(
+            family_names=(
+                family_name,
+                patient_details.name[0].family,
+            ),  # FIXME: Do not just check 0th element
+            given_names=(
+                given_name,
+                patient_details.name[0].given,
+            ),  # FIXME: Do not just check 0th element
+        ):
+            raise NameMissmatchError
 
     @staticmethod
     def _do_names_match(
@@ -36,9 +49,8 @@ class VerifyPatientController:
         if family_names[0].lower() != family_names[1].lower():
             return False
 
-        if not any(
-            given_name.lower() in set(n.lower() for n in given_names[1])
-            for given_name in given_names[0]
+        if set(n.lower() for n in given_names[0]) != set(
+            n.lower() for n in given_names[1]
         ):
             return False
 

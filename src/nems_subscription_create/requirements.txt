@@ -3,3 +3,4 @@ pydantic==1.10.5
 PyJWT==2.6.0
 cryptography==39.0.2
 fhir.resources==6.5.0
+aws_lambda_powertools==2.9.1

@@ -8,7 +8,7 @@ from pydantic import BaseSettings, HttpUrl, validator
 
 
 class PDSSettings(BaseSettings):
-    jwt_rsa_private_key: bytes
+    jwt_rsa_private_key: str
     jwt_sub: str
     jwt_iss: str
     jwt_aud: str = "https://int.api.service.nhs.uk/oauth2/token"
@@ -25,7 +25,7 @@ class PDSSettings(BaseSettings):
     @validator("jwt_rsa_private_key", pre=True)
     def _decode_jwt_rsa_private_key_if_encoded(cls, v: str):
         if "-----BEGIN RSA PRIVATE KEY-----" in v:
-            return v
+            return f"{v}"  # to escape newlines
         try:
             return base64.b64decode(v)
         except ValueError:

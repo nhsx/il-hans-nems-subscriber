@@ -14,13 +14,17 @@ Parameters:
     Default: "int-1"
   pdsBaseUrl:
     Type: String
-    Default: "https://int.api.service.nhs.uk/oauth2/token"
+    Default: "https://int.api.service.nhs.uk"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     MemorySize: 128
+    Environment:
+      Variables:
+        POWERTOOLS_SERVICE_NAME: hans
+        LOG_LEVEL: INFO
 
 # AWS SAM Spec is here: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
 Resources:
@@ -42,9 +46,9 @@ Resources:
       Environment:
         Variables:
           PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
-          PDS_JWT_SUB: "{{resolve:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:il-hans-nems-subscriber:SecretString:PDS_JWT_SUB}}"
-          PDS_JWT_ISS: "{{resolve:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:il-hans-nems-subscriber:SecretString:PDS_JWT_ISS}}"
-          PDS_API_KEY: "{{resolve:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:il-hans-nems-subscriber:SecretString:PDS_API_KEY}}"
+          PDS_JWT_SUB: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_SUB}}"
+          PDS_JWT_ISS: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_ISS}}"
+          PDS_API_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_API_KEY}}"
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
