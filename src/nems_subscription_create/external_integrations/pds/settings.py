@@ -11,13 +11,13 @@ class PDSSettings(BaseSettings):
     jwt_rsa_private_key: str
     jwt_sub: str
     jwt_iss: str
-    jwt_aud: str = "https://int.api.service.nhs.uk/oauth2/token"
+    jwt_aud: str
     jwt_lifetime_seconds: int = 5 * 60
     jwt_algorithm: str = "RS512"
     jwks_kid: str = "int-1"
 
     api_key: str
-    base_url: HttpUrl = "https://int.api.service.nhs.uk"
+    base_url: HttpUrl
 
     class Config:
         env_prefix = "PDS_"
