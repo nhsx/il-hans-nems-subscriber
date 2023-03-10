@@ -1,13 +1,24 @@
 from datetime import date
 from typing import Optional, Sequence, Tuple
 
+from fhir.resources.humanname import HumanName
+
 from controllers.exceptions import (
-    NameMissmatchError,
-    BirthDateMissmatchError,
-    NotOKResponseFromPDSError,
+    NameMissmatch,
+    BirthDateMissmatch,
+    IncorrectNHSNumber,
+    PatientNotFound,
+    InternalError,
 )
 from external_integrations.pds.api_client import PDSApiClient
-from external_integrations.pds.exceptions import InvalidResponseError
+from external_integrations.pds.exceptions import (
+    InvalidNHSNumber,
+    MissingNHSNumber,
+    PatientDoesNotExist,
+    PatientDidButNoLongerExists,
+    UnknownPDSError,
+    PDSUnavailable,
+)
 
 
 class VerifyPatientController:
@@ -18,41 +29,33 @@ class VerifyPatientController:
             self,
             *,
             nhs_number: str,
-            family_name: str,
-            given_name: Sequence[str],
+            patient_name: HumanName,
             birth_date: date
     ) -> None:
         # TODO: Prevent timing-based attacks
         try:
             patient_details = self.pds_api_client.get_patient_details(nhs_number)
-        except InvalidResponseError:
-            raise NotOKResponseFromPDSError
+        except (InvalidNHSNumber, MissingNHSNumber):
+            raise IncorrectNHSNumber
+        except (PatientDoesNotExist, PatientDidButNoLongerExists):
+            raise PatientNotFound
+        except (UnknownPDSError, PDSUnavailable):
+            raise InternalError
 
         if not birth_date == patient_details.birthDate:
-            raise BirthDateMissmatchError
+            raise BirthDateMissmatch
 
-        if not self._do_names_match(
-                family_names=(
-                        family_name,
-                        patient_details.name[0].family,
-                ),  # FIXME: Do not just check 0th element
-                given_names=(
-                        given_name,
-                        patient_details.name[0].given,
-                ),  # FIXME: Do not just check 0th element
-        ):
-            raise NameMissmatchError
+        if not any(self._do_human_names_match(patient_name, pds_name) for pds_name in patient_details.name):
+            raise NameMissmatch
 
     @staticmethod
-    def _do_names_match(
-            family_names: Tuple[str, str], given_names: Tuple[Sequence[str], Sequence[str]]
+    def _do_human_names_match(
+            human_name_1: HumanName, human_name_2: HumanName
     ) -> bool:
-        if family_names[0].lower() != family_names[1].lower():
+        if human_name_1.family.lower() != human_name_2.family.lower():
             return False
 
-        if set(n.lower() for n in given_names[0]) != set(
-                n.lower() for n in given_names[1]
-        ):
+        if human_name_1.given[0].lower() != human_name_2.given[0].lower():
             return False
 
         return True
