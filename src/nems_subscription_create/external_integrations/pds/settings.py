@@ -34,11 +34,11 @@ class PDSSettings(BaseSettings):
     @property
     def jwt_claims(self) -> Mapping[str, Any]:
         return {
-            "sub": PDS_SETTINGS.jwt_sub,
-            "iss": PDS_SETTINGS.jwt_iss,
+            "sub": self.jwt_sub,
+            "iss": self.jwt_iss,
             "jti": str(uuid.uuid4()),
-            "aud": PDS_SETTINGS.jwt_aud,
-            "exp": int(time.time()) + PDS_SETTINGS.jwt_lifetime_seconds,
+            "aud": self.jwt_aud,
+            "exp": int(time.time()) + self.jwt_lifetime_seconds,
         }
 
     @property
@@ -49,6 +49,3 @@ class PDSSettings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_pds_settings():
     return PDSSettings()
-
-
-PDS_SETTINGS: PDSSettings = get_pds_settings()

@@ -3,14 +3,19 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import jwt
+from fhir.resources.operationoutcome import OperationOutcome
 import requests
 from aws_lambda_powertools import Logger
-from external_integrations.pds.exceptions import InvalidResponseError
+from external_integrations.pds.exceptions import (
+    operation_outcome_to_exception,
+    PDSUnavailable,
+    UnknownPDSError,
+)
 from external_integrations.pds.schemas import (
     PatientDetailsResponse,
     AccessTokenResponse,
 )
-from external_integrations.pds.settings import PDS_SETTINGS
+from external_integrations.pds.settings import get_pds_settings
 from pydantic import HttpUrl
 
 _LOGGER = Logger()
@@ -18,12 +23,12 @@ _LOGGER = Logger()
 
 class PDSApiClient:
     def __init__(
-            self,
-            base_url: Optional[HttpUrl] = None,
-            session: Optional[requests.Session] = None,
+        self,
+        base_url: Optional[HttpUrl] = None,
+        session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
-        self.base_url: HttpUrl = base_url or PDS_SETTINGS.base_url
+        self.base_url: HttpUrl = base_url or get_pds_settings().base_url
         self._access_token = None
         self._access_token_expires_at = None
 
@@ -33,10 +38,15 @@ class PDSApiClient:
             "Authorization": f"Bearer {self._get_valid_access_token()}",
             "X-Request-ID": str(uuid.uuid4()),
         }
-        response = requests.get(url=url, headers=headers)
-        if response.status_code != 200:
+        response = self.session.get(url=url, headers=headers)
+        if response.status_code in range(400, 500):
+            operation_outcome = OperationOutcome(**response.json())
             _LOGGER.warning({"response_text": response.text})
-            raise InvalidResponseError
+            raise operation_outcome_to_exception(operation_outcome)
+
+        if response.status_code >= 500:
+            _LOGGER.warning({"response_text": response.text})
+            raise PDSUnavailable
 
         response_json = response.json()
         return PatientDetailsResponse(**response_json)
@@ -49,17 +59,17 @@ class PDSApiClient:
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             "client_assertion": encoded_jwt,
         }
-        response = requests.post(url, headers=headers, data=data)
+        response = self.session.post(url, headers=headers, data=data)
         if response.status_code != 200:
             _LOGGER.warning({"response_text": response.text})
-            raise InvalidResponseError
+            raise UnknownPDSError
 
         return AccessTokenResponse(**response.json())
 
     def _get_valid_access_token(self):
         if (
-                self._access_token_expires_at is not None
-                and self._access_token_expires_at > datetime.utcnow()
+            self._access_token_expires_at is not None
+            and self._access_token_expires_at > datetime.utcnow()
         ):
             return self._access_token
 
@@ -72,9 +82,10 @@ class PDSApiClient:
 
     @staticmethod
     def _generate_jwt() -> str:
+        pds_settings = get_pds_settings()
         return jwt.encode(
-            payload=PDS_SETTINGS.jwt_claims,
-            key=PDS_SETTINGS.jwt_rsa_private_key,
-            algorithm=PDS_SETTINGS.jwt_algorithm,
-            headers=PDS_SETTINGS.jwt_headers,
+            payload=pds_settings.jwt_claims,
+            key=pds_settings.jwt_rsa_private_key,
+            algorithm=pds_settings.jwt_algorithm,
+            headers=pds_settings.jwt_headers,
         )
