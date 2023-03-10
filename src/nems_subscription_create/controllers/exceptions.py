@@ -2,13 +2,21 @@ class VerifyPatientException(Exception):
     pass
 
 
-class NameMissmatchError(VerifyPatientException):
+class NameMissmatch(VerifyPatientException):
     pass
 
 
-class BirthDateMissmatchError(VerifyPatientException):
+class BirthDateMissmatch(VerifyPatientException):
     pass
 
 
-class NotOKResponseFromPDSError(VerifyPatientException):
+class IncorrectNHSNumber(VerifyPatientException):
+    pass
+
+
+class PatientNotFound(VerifyPatientException):
+    pass
+
+
+class InternalError(VerifyPatientException):
     pass
