@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
+from functools import lru_cache
 from typing import Optional
 
 import jwt
@@ -82,6 +83,7 @@ class PDSApiClient:
         return self._access_token
 
     @staticmethod
+    @lru_cache(maxsize=1)
     def _generate_jwt() -> str:
         pds_settings = get_pds_settings()
         return jwt.encode(
