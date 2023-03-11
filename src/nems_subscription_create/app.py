@@ -21,8 +21,7 @@ def lambda_handler(event: dict, context: LambdaContext):
     try:
         VerifyPatientController().verify_patient_data(
             nhs_number=patient.identifier[0].value,
-            family_name=patient.name[0].family,
-            given_name=patient.name[0].given,
+            patient_name=patient.name[0],
             birth_date=patient.birthDate,
         )
     except IncorrectNHSNumber:
