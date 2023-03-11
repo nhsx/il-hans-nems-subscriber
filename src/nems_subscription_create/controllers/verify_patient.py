@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional, Sequence, Tuple
+from typing import Optional
 
 from fhir.resources.humanname import HumanName
 
@@ -22,13 +22,14 @@ from external_integrations.pds.exceptions import (
 
 
 class VerifyPatientController:
+    _NAME_USES_TO_IGNORE = {"old", "temp"}
+
     def __init__(self, pds_api_client: Optional[PDSApiClient] = None):
         self.pds_api_client: PDSApiClient = pds_api_client or PDSApiClient()
 
     def verify_patient_data(
         self, *, nhs_number: str, patient_name: HumanName, birth_date: date
     ) -> None:
-        # TODO: Prevent timing-based attacks
         try:
             patient_details = self.pds_api_client.get_patient_details(nhs_number)
         except (InvalidNHSNumber, MissingNHSNumber):
@@ -44,6 +45,7 @@ class VerifyPatientController:
         if not any(
             self._do_human_names_match(patient_name, pds_name)
             for pds_name in patient_details.name
+            if pds_name.use not in self._NAME_USES_TO_IGNORE
         ):
             raise NameMissmatch
 

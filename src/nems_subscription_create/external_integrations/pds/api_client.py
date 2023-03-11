@@ -3,9 +3,11 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import jwt
-from fhir.resources.operationoutcome import OperationOutcome
 import requests
 from aws_lambda_powertools import Logger
+from fhir.resources.operationoutcome import OperationOutcome
+from pydantic import HttpUrl
+
 from external_integrations.pds.exceptions import (
     operation_outcome_to_exception,
     PDSUnavailable,
@@ -16,7 +18,6 @@ from external_integrations.pds.schemas import (
     AccessTokenResponse,
 )
 from external_integrations.pds.settings import get_pds_settings
-from pydantic import HttpUrl
 
 _LOGGER = Logger()
 
