@@ -1,45 +1,96 @@
-import json
+from uuid import uuid4
+
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities.typing import LambdaContext
+from fhir.resources.operationoutcome import OperationOutcome, OperationOutcomeIssue
+
+from controllers.exceptions import (
+    IncorrectNHSNumber,
+    PatientNotFound,
+    InternalError,
+    BirthDateMissmatch,
+    NameMissmatch,
+)
+from controllers.verify_patient import VerifyPatientController
+from pydantic import ValidationError
+
+from schemas import HANSPatient
+
+_LOGGER = Logger()
 
 
-# import requests
-
-
-def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(
-            {
-                "message": "hello world",
-                # "location": ip.text.replace("\n", "")
-            }
-        ),
-    }
+@_LOGGER.inject_lambda_context(log_event=True)
+def lambda_handler(event: dict, context: LambdaContext):
+    try:
+        patient = HANSPatient.parse_raw(event["body"])
+        VerifyPatientController().verify_patient_data(
+            nhs_number=patient.identifier[0].value,
+            patient_name=patient.name[0],
+            birth_date=patient.birthDate,
+        )
+    except ValidationError as ex:
+        return {
+            "statusCode": 400,
+            "body": OperationOutcome(
+                issue=[
+                    OperationOutcomeIssue(
+                        severity="error",
+                        code="value",
+                        diagnostics=str(ex),
+                    )
+                ]
+            ).json(),
+        }
+    except IncorrectNHSNumber:
+        return {
+            "statusCode": 400,
+            "body": OperationOutcome(
+                issue=[
+                    OperationOutcomeIssue(
+                        severity="error",
+                        code="value",
+                        diagnostics="NHS Number provided was invalid",
+                    )
+                ]
+            ).json(),
+        }
+    except (BirthDateMissmatch, NameMissmatch) as ex:
+        return {
+            "statusCode": 400,
+            "body": OperationOutcome(
+                issue=[
+                    OperationOutcomeIssue(
+                        severity="error",
+                        code="business-rule",
+                        diagnostics=f"Provided data is incorrect: {type(ex).__name__}",
+                    )
+                ]
+            ).json(),
+        }
+    except PatientNotFound:
+        return {
+            "statusCode": 404,
+            "body": OperationOutcome(
+                issue=[
+                    OperationOutcomeIssue(
+                        severity="error",
+                        code="not-found",
+                        diagnostics="NHS Number did not exist on PDS",
+                    )
+                ]
+            ).json(),
+        }
+    except InternalError:
+        return {
+            "statusCode": 500,
+            "body": OperationOutcome(
+                issue=[
+                    OperationOutcomeIssue(
+                        severity="error",
+                        code="exception",
+                        diagnostics="Unknown error occurred",
+                    )
+                ]
+            ).json(),
+        }
+    return {"statusCode": 201, "headers": {"X-Subscription-Id": str(uuid4())}}
