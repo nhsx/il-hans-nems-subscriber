@@ -30,7 +30,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         return {"statusCode": 201, "headers": {"X-Subscription-Id": str(uuid4())}}
     except ValidationError as ex:
         return operation_outcome_lambda_response_factory(
-            status_code=200, severity="error", code="value", diagnostics=str(ex)
+            status_code=400, severity="error", code="value", diagnostics=str(ex)
         )
     except IncorrectNHSNumber:
         return operation_outcome_lambda_response_factory(
