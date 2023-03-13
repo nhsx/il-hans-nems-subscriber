@@ -1,0 +1,133 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&client_assertion=eyJhbGciOiJSUzUxMiIsImtpZCI6ImludC0xIiwidHlwIjoiSldUIn0.eyJzdWIiOiJxQTR0cUdtWHdjQjVBSUk2TkxFT0RVZXFUYmJYMnl6QSIsImlzcyI6InFBNHRxR21Yd2NCNUFJSTZOTEVPRFVlcVRiYlgyeXpBIiwianRpIjoiM2I2YzI5MzktZDRjNC00N2YwLWIyYWMtOTVkNjQ5ZWUxMDRjIiwiYXVkIjoiaHR0cHM6Ly9pbnQuYXBpLnNlcnZpY2UubmhzLnVrL29hdXRoMi90b2tlbiIsImV4cCI6MTY3ODczNDIyOX0.CyznP8f73MFUDMCA4epLWN4YK-hZglZTVor0q6NHuFKSfnUyBYXwuKsrJ-_ys72Qg559XtgZ9RyJkgHSvbZ487aMsZA0Xhatz6XDhwjzxYkMVFQji8C7yPm6BUe9Vp41__n3p9OMDuOK-YPD_WEmZNexW-ZEod2rumhX5YBOAgcemsPkbmLakxoBpw3tl0M5lG09wXNlYh2Qiitj_VHg6PHAFMccfL4lzReNAUiC_8iCuO2_6Bsb4g7cY2GmNHMHN8bF2oNQOwDnxfwHKcrDsk2pGyZ6SVPEjLM4EMloEIDyoFZL72sgQooSLuTKJXQzeptMNZBhJJpN-z-C0_qQEFLFm0jMn_qk5Leo6tkv2ab-jOE6XaMBt7PWRiont8fVQNECCjEgZuMw2LQKD6aUr6R6xbTlwNF1atOS3aFnpQXvC6wezCz8-jwGQ4JJo0TU4RiObctoXArySJeq3MX8Y30E4uS96vphe_TA4EqKYYjCpBcI2uVBnRNLQSS5aWIX8PjZponN83zwLRK3uxn16liWDpzOAUeKcvRf4iibzFXy4-adv8iGWAEdtupNr3kb1u07jkbpox_o1M8IrqW7yrIpr4RPxn6cMuYFpc1AMY_wOpWESO-BImIupWhbeffLCH3mo6P9fkBoG3xedvYo-0MEhJHpmnmp-92v339sJdc
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1137'
+      User-Agent:
+      - python-requests/2.28.2
+      content-type:
+      - application/x-www-form-urlencoded
+    method: POST
+    uri: https://int.api.service.nhs.uk/oauth2/token
+  response:
+    body:
+      string: "\n      {\n        \"access_token\": \"psoPshdW6tD9YmBDnb0rl7Feqar1\",\n
+        \       \"expires_in\": \"599\",\n        \"token_type\": \"Bearer\",\n        \"issued_at\":
+        \"1678733930022\"\n      }\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '171'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Mar 2023 18:58:50 GMT
+      Host:
+      - int.api.service.nhs.uk
+      NHSD-Correlation-ID:
+      - ..rrt-5796338890577065136-a-geu2-24091-4167419-1
+      NHSD-Request-ID:
+      - ''
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      User-Agent:
+      - python-requests/2.28.2
+      X-Forwarded-For:
+      - 91.146.228.176
+      X-Forwarded-Port:
+      - '443'
+      X-Forwarded-Proto:
+      - https
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer psoPshdW6tD9YmBDnb0rl7Feqar1
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - 216b833b-bb63-43a0-94ca-ea3c4a5e3f6c
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002394
+  response:
+    body:
+      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
+        \                   \"extension\": [\n                        {\n                            \"url\":
+        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
+        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
+        \                           }\n                        },\n                        {\n
+        \                           \"url\": \"value\",\n                            \"valueString\":
+        \"6308537\"\n                        }\n                    ],\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
+        \               }\n            ],\n            \"id\": \"NXfLA\",\n            \"line\":
+        [\n                \"53 TOP ROAD\",\n                \"WORLABY\",\n                \"BRIGG\",\n
+        \               \"S HUMBERSIDE\"\n            ],\n            \"period\":
+        {\n                \"start\": \"1984-02-10\"\n            },\n            \"postalCode\":
+        \"DN20 0NG\",\n            \"use\": \"home\"\n        }\n    ],\n    \"birthDate\":
+        \"1960-08-18\",\n    \"gender\": \"female\",\n    \"generalPractitioner\":
+        [\n        {\n            \"id\": \"YgoiM\",\n            \"identifier\":
+        {\n                \"period\": {\n                    \"start\": \"1965-06-28\"\n
+        \               },\n                \"system\": \"https://fhir.nhs.uk/Id/ods-organization-code\",\n
+        \               \"value\": \"A20047\"\n            },\n            \"type\":
+        \"Organization\"\n        }\n    ],\n    \"id\": \"9728002394\",\n    \"identifier\":
+        [\n        {\n            \"extension\": [\n                {\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
+        \                   \"valueCodeableConcept\": {\n                        \"coding\":
+        [\n                            {\n                                \"code\":
+        \"01\",\n                                \"display\": \"Number present and
+        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
+        \                               \"version\": \"1.0.0\"\n                            }\n
+        \                       ]\n                    }\n                }\n            ],\n
+        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
+        \"9728002394\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
+        [\n            {\n                \"code\": \"U\",\n                \"display\":
+        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
+        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
+        [\n        {\n            \"family\": \"LOLLA\",\n            \"given\": [\n
+        \               \"AGRATA\",\n                \"BANDANA\"\n            ],\n
+        \           \"id\": \"TWVNH\",\n            \"period\": {\n                \"start\":
+        \"1990-05-07\"\n            },\n            \"prefix\": [\n                \"MS\"\n
+        \           ],\n            \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\":
+        \"Patient\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2968'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Mon, 13 Mar 2023 18:58:50 GMT
+      Etag:
+      - W/"1"
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - 216b833b-bb63-43a0-94ca-ea3c4a5e3f6c
+    status:
+      code: 200
+      message: OK
+version: 1
