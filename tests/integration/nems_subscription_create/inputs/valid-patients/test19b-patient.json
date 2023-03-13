@@ -1,0 +1,38 @@
+{
+    "resourceType": "Patient",
+    "meta": {
+        "profile":  [
+            "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Patient"
+        ]
+    },
+    "identifier":  [
+        {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9728002424",
+            "extension":  [
+                {
+                    "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
+                    "valueCodeableConcept": {
+                        "coding":  [
+                            {
+                                "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland",
+                                "code": "03",
+                                "display": "Trace required"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "name":  [
+        {
+            "use": "usual",
+            "family": "speake",
+            "given":  [
+                "samson"
+            ]
+        }
+    ],
+    "birthDate": "1962-10-04"
+}
