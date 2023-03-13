@@ -3,6 +3,7 @@ from uuid import uuid4
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
+from pydantic.env_settings import SettingsError
 
 from controllers.exceptions import (
     IncorrectNHSNumber,
@@ -12,6 +13,7 @@ from controllers.exceptions import (
     NameMissmatch,
 )
 from controllers.verify_patient import VerifyPatientController
+from external_integrations.pds.settings import PDSSettings
 from schemas import HANSPatient
 from utils import operation_outcome_lambda_response_factory
 
@@ -66,4 +68,11 @@ def lambda_handler(event: dict, context: LambdaContext):
             severity="error",
             code="exception",
             diagnostics="Unknown error occurred",
+        )
+    except SettingsError as ex:
+        return operation_outcome_lambda_response_factory(
+            status_code=500,
+            severity="exception",
+            code="value",
+            diagnostics=str(ex),
         )

@@ -4,7 +4,8 @@ import uuid
 from functools import lru_cache
 from typing import Mapping, Any
 
-from pydantic import BaseSettings, HttpUrl, validator
+from pydantic import BaseSettings, HttpUrl, validator, ValidationError
+from pydantic.env_settings import SettingsError
 
 
 class PDSSettings(BaseSettings):
@@ -48,4 +49,7 @@ class PDSSettings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_pds_settings():
-    return PDSSettings()
+    try:
+        return PDSSettings()
+    except ValidationError:
+        raise SettingsError("Miss-configured PDS settings")
