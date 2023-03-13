@@ -14,7 +14,7 @@ class PDSSettings(BaseSettings):
     jwt_aud: str
     jwt_lifetime_seconds: int = 5 * 60
     jwt_algorithm: str = "RS512"
-    jwks_kid: str = "int-1"
+    jwks_kid: str
 
     api_key: str
     base_url: HttpUrl
