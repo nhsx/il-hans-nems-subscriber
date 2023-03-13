@@ -31,8 +31,8 @@ class PDSApiClient:
     ):
         self.session: requests.Session = session or requests.Session()
         self.base_url: HttpUrl = base_url or get_pds_settings().base_url
-        self._access_token = None
-        self._access_token_expires_at = None
+        self._access_token: Optional[str] = None
+        self._access_token_expires_at: Optional[datetime] = None
 
     def get_patient_details(self, nhs_number: str) -> PatientDetailsResponse:
         url = f"{self.base_url}/personal-demographics/FHIR/R4/Patient/{nhs_number}"
@@ -68,7 +68,7 @@ class PDSApiClient:
 
         return AccessTokenResponse(**response.json())
 
-    def _get_valid_access_token(self):
+    def _get_valid_access_token(self) -> str:
         if (
             self._access_token_expires_at is not None
             and self._access_token_expires_at > datetime.utcnow()
