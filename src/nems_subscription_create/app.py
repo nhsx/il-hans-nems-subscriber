@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from fhir.resources.operationoutcome import OperationOutcome, OperationOutcomeIssue
+from pydantic import ValidationError
 
 from controllers.exceptions import (
     IncorrectNHSNumber,
@@ -12,9 +12,8 @@ from controllers.exceptions import (
     NameMissmatch,
 )
 from controllers.verify_patient import VerifyPatientController
-from pydantic import ValidationError
-
 from schemas import HANSPatient
+from utils import operation_outcome_lambda_response_factory
 
 _LOGGER = Logger()
 
@@ -28,69 +27,43 @@ def lambda_handler(event: dict, context: LambdaContext):
             patient_name=patient.name[0],
             birth_date=patient.birthDate,
         )
+        return {"statusCode": 201, "headers": {"X-Subscription-Id": str(uuid4())}}
     except ValidationError as ex:
-        return {
-            "statusCode": 400,
-            "body": OperationOutcome(
-                issue=[
-                    OperationOutcomeIssue(
-                        severity="error",
-                        code="value",
-                        diagnostics=str(ex),
-                    )
-                ]
-            ).json(),
-        }
+        return operation_outcome_lambda_response_factory(
+            status_code=200, severity="error", code="value", diagnostics=str(ex)
+        )
     except IncorrectNHSNumber:
-        return {
-            "statusCode": 400,
-            "body": OperationOutcome(
-                issue=[
-                    OperationOutcomeIssue(
-                        severity="error",
-                        code="value",
-                        diagnostics="NHS Number provided was invalid",
-                    )
-                ]
-            ).json(),
-        }
-    except (BirthDateMissmatch, NameMissmatch) as ex:
-        return {
-            "statusCode": 400,
-            "body": OperationOutcome(
-                issue=[
-                    OperationOutcomeIssue(
-                        severity="error",
-                        code="business-rule",
-                        diagnostics=f"Provided data is incorrect: {type(ex).__name__}",
-                    )
-                ]
-            ).json(),
-        }
+        return operation_outcome_lambda_response_factory(
+            status_code=400,
+            severity="error",
+            code="value",
+            diagnostics="NHS Number provided was invalid",
+        )
+    except BirthDateMissmatch:
+        return operation_outcome_lambda_response_factory(
+            status_code=400,
+            severity="error",
+            code="business-rule",
+            diagnostics="Date of birth did not match",
+        )
+    except NameMissmatch:
+        return operation_outcome_lambda_response_factory(
+            status_code=400,
+            severity="error",
+            code="business-rule",
+            diagnostics="Name did not match",
+        )
     except PatientNotFound:
-        return {
-            "statusCode": 404,
-            "body": OperationOutcome(
-                issue=[
-                    OperationOutcomeIssue(
-                        severity="error",
-                        code="not-found",
-                        diagnostics="NHS Number did not exist on PDS",
-                    )
-                ]
-            ).json(),
-        }
+        return operation_outcome_lambda_response_factory(
+            status_code=404,
+            severity="error",
+            code="not-found",
+            diagnostics="NHS Number did not exist on PDS",
+        )
     except InternalError:
-        return {
-            "statusCode": 500,
-            "body": OperationOutcome(
-                issue=[
-                    OperationOutcomeIssue(
-                        severity="error",
-                        code="exception",
-                        diagnostics="Unknown error occurred",
-                    )
-                ]
-            ).json(),
-        }
-    return {"statusCode": 201, "headers": {"X-Subscription-Id": str(uuid4())}}
+        return operation_outcome_lambda_response_factory(
+            status_code=500,
+            severity="error",
+            code="exception",
+            diagnostics="Unknown error occurred",
+        )
