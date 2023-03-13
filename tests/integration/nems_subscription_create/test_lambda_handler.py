@@ -5,8 +5,8 @@ import pytest
 
 from src.nems_subscription_create.app import lambda_handler
 
-BROKEN_PATIENTS_TEST_DATA_PATH = f"{os.path.dirname(__file__)}/inputs/broken-patients/"
-VALID_PATIENTS_TEST_DATA_PATH = f"{os.path.dirname(__file__)}/inputs/valid-patients/"
+BROKEN_PATIENTS_TEST_DATA_PATH = f"./_inputs/broken-patients/"
+VALID_PATIENTS_TEST_DATA_PATH = f"./_inputs/valid-patients/"
 
 
 @pytest.mark.parametrize(
@@ -16,7 +16,7 @@ VALID_PATIENTS_TEST_DATA_PATH = f"{os.path.dirname(__file__)}/inputs/valid-patie
         for fn in os.listdir(VALID_PATIENTS_TEST_DATA_PATH)
     ],
 )
-@pytest.mark.vcr
+@pytest.mark.vcr("casette.yml")
 def test_valid_patient_data(patient_data_file_path: str):
     with open(patient_data_file_path, "r") as f:
         body = f.read()
@@ -32,7 +32,7 @@ def test_valid_patient_data(patient_data_file_path: str):
         for fn in os.listdir(BROKEN_PATIENTS_TEST_DATA_PATH)
     ],
 )
-@pytest.mark.vcr
+@pytest.mark.vcr("casette.yml")
 def test_broken_patient_data(patient_data_file_path: str):
     with open(patient_data_file_path, "r") as f:
         body = f.read()
