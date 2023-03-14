@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&client_assertion=eyJhbGciOiJSUzUxMiIsImtpZCI6ImludC0xIiwidHlwIjoiSldUIn0.eyJzdWIiOiJxQTR0cUdtWHdjQjVBSUk2TkxFT0RVZXFUYmJYMnl6QSIsImlzcyI6InFBNHRxR21Yd2NCNUFJSTZOTEVPRFVlcVRiYlgyeXpBIiwianRpIjoiN2Y1YTNiNDAtNjM2Yi00N2I5LTg1ZmMtMTg2MWVhNGUyM2M0IiwiYXVkIjoiaHR0cHM6Ly9pbnQuYXBpLnNlcnZpY2UubmhzLnVrL29hdXRoMi90b2tlbiIsImV4cCI6MTY3ODc0NDIxOX0.akOUvY6IMmdzVkUEn7hBcMqYGv6p4iVkvIZedJQLww-PQXbxV_I4ia0FKj0suqZQd9Fm4we5BOFZVdzm0WeSAAN9lS7fMr3lTGbeqr4QXPDIvWGqDKyAnS813hE0Y87ixz-VeYZDZxuiPHeIkjJHS8uQj51w6wb9Uil3Q7TvyQ3wRX0Fjfhdkvh53hgejUCLTJOvb7vCMdWZX2uPO0WNJDeHkhR5i9gBShCvlWs6AAk4x9Y7_yJTfuJDFW0ouk9RIQNHWZfXJHfGsUetqk6iFxKhJRKQFyH8cWDigjep98ZOEa0RSAeQbzAZa36vyvk8aTFls5rvL20lw1QvArBtRrt0IRjH5w2ZvIEdy3pLjCQ9UFvbt-A9bIjtTG8Cx07G9usrFmUQRJUF7Jp2pC71WglNeeZ0186KFjzq8UNf3i6WyKfi9rU7bTvc4oF2mB5EZQyTs-VdbnB0DkJDv7y-2K1P_TiRfKtlnRlBIWUAhPwbdS5QJfYZ3SACj0x9SiBs4hDQ0mlqWPWjfJQug_2Kxn9f9gX9uP1lH7PmYjoLUFCktp0TB3rOvO-qF_4lEyTneBrZw5jAMBg_NAAIR0UvqfOrwcZhamYpGDzy5QW4KrzDgr01kPuSr7Rn0gKFCWodqrGGrFhKN6WiG7QcdsEwlNNPpRrm9vLhEsky4MtKbos
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1137'
+      User-Agent:
+      - python-requests/2.28.2
+      content-type:
+      - application/x-www-form-urlencoded
+    method: POST
+    uri: https://int.api.service.nhs.uk/oauth2/token
+  response:
+    body:
+      string: "\n      {\n        \"access_token\": \"aebHeZVaxjkxlcvBxgBGGqyptzkB\",\n
+        \       \"expires_in\": \"599\",\n        \"token_type\": \"Bearer\",\n        \"issued_at\":
+        \"1678743920192\"\n      }\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '171'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Mar 2023 21:45:20 GMT
+      Host:
+      - int.api.service.nhs.uk
+      NHSD-Correlation-ID:
+      - ..rrt-2317811097629275444-a-geu2-23903-8025828-1
+      NHSD-Request-ID:
+      - ''
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      User-Agent:
+      - python-requests/2.28.2
+      X-Forwarded-For:
+      - 91.146.228.176
+      X-Forwarded-Port:
+      - '443'
+      X-Forwarded-Proto:
+      - https
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer aebHeZVaxjkxlcvBxgBGGqyptzkB
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - 054b4d78-4066-4bff-aa44-14aabb6f0245
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/0008002475
+  response:
+    body:
+      string: "{\n    \"issue\": [\n        {\n            \"code\": \"value\",\n
+        \           \"details\": {\n                \"coding\": [\n                    {\n
+        \                       \"code\": \"INVALID_RESOURCE_ID\",\n                        \"display\":
+        \"Resource Id is invalid\",\n                        \"system\": \"https://fhir.nhs.uk/R4/CodeSystem/Spine-ErrorOrWarningCode\",\n
+        \                       \"version\": \"1\"\n                    }\n                ]\n
+        \           },\n            \"severity\": \"error\"\n        }\n    ],\n    \"resourceType\":
+        \"OperationOutcome\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '526'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Mon, 13 Mar 2023 21:45:20 GMT
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - 054b4d78-4066-4bff-aa44-14aabb6f0245
+    status:
+      code: 400
+      message: Bad Request
+version: 1
