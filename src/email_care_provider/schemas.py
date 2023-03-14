@@ -1,4 +1,4 @@
-from fhir.resources.bundle import Bundle, BundleEntry
+from fhir.resources.bundle import Bundle
 from fhir.resources.patient import Patient
 from fhir.resources.location import Location
 from fhir.resources.encounter import Encounter

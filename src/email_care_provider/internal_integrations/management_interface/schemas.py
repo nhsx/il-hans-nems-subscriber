@@ -1,6 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from fhir.resources.organization import Organization
 
 
-class CareProviderResponse(BaseModel):
-    given_name: str
-    email: EmailStr
+class CareProviderResponse(Organization):
+    ...
