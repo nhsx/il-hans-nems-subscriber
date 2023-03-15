@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime, timedelta
-from functools import lru_cache
 from typing import Optional
 
 import jwt
@@ -71,7 +70,7 @@ class PDSApiClient:
     def _get_valid_access_token(self) -> str:
         if (
             self._access_token_expires_at is not None
-            and self._access_token_expires_at > datetime.utcnow()
+            and self._access_token_expires_at < datetime.utcnow()
         ):
             return self._access_token
 
@@ -83,7 +82,6 @@ class PDSApiClient:
         return self._access_token
 
     @staticmethod
-    @lru_cache(maxsize=1)
     def _generate_jwt() -> str:
         pds_settings = get_pds_settings()
         return jwt.encode(

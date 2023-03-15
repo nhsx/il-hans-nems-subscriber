@@ -2,11 +2,18 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-
+from pytest_mock import MockFixture
+import jwt
 from src.nems_subscription_create.app import lambda_handler
 
 BROKEN_PATIENTS_TEST_DATA_PATH = "./_inputs/broken-patients/"
 VALID_PATIENTS_TEST_DATA_PATH = "./_inputs/valid-patients/"
+
+
+@pytest.fixture(autouse=True)
+def _patch_jwt_encode(mocker: MockFixture):
+    """This function is expensive, so let's mock it."""
+    mocker.patch.object(jwt, jwt.encode.__name__, MagicMock(return_value="jwt"))
 
 
 @pytest.mark.parametrize(
@@ -17,7 +24,7 @@ VALID_PATIENTS_TEST_DATA_PATH = "./_inputs/valid-patients/"
     ],
 )
 @pytest.mark.vcr("casette.yml")
-def test_valid_patient_data(patient_data_file_path: str):
+def test_valid_patient_data(patient_data_file_path: str, mocker: MockFixture):
     with open(patient_data_file_path, "r") as f:
         body = f.read()
 

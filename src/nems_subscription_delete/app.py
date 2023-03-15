@@ -10,7 +10,7 @@ _LOGGER = Logger()
 @_LOGGER.inject_lambda_context(log_event=True)
 def lambda_handler(event: dict, context: LambdaContext):
     try:
-        subscription_id = UUID(event["pathParameters"]["id"])
+        UUID(event["pathParameters"]["id"])
     except ValueError:
         return {
             "statusCode": 500,
