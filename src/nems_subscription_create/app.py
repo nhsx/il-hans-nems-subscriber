@@ -13,7 +13,6 @@ from controllers.exceptions import (
     NameMissmatch,
 )
 from controllers.verify_patient import VerifyPatientController
-from external_integrations.pds.settings import PDSSettings
 from schemas import HANSPatient
 from utils import operation_outcome_lambda_response_factory
 

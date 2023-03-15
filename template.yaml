@@ -41,7 +41,7 @@ Resources:
         NEMSSubscriptionCreate:
           Type: Api
           Properties:
-            Path: /manage_subscription
+            Path: /subscription
             Method: post
       Environment:
         Variables:
@@ -65,7 +65,7 @@ Resources:
         NEMSSubscriptionDelete:
           Type: Api
           Properties:
-            Path: /manage_subscription
+            Path: /subscription/{id}
             Method: delete
   MESHCheckMailboxFunction:
     Type: AWS::Serverless::Function

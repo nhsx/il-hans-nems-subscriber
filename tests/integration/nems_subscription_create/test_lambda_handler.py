@@ -5,8 +5,8 @@ import pytest
 
 from src.nems_subscription_create.app import lambda_handler
 
-BROKEN_PATIENTS_TEST_DATA_PATH = f"./_inputs/broken-patients/"
-VALID_PATIENTS_TEST_DATA_PATH = f"./_inputs/valid-patients/"
+BROKEN_PATIENTS_TEST_DATA_PATH = "./_inputs/broken-patients/"
+VALID_PATIENTS_TEST_DATA_PATH = "./_inputs/valid-patients/"
 
 
 @pytest.mark.parametrize(
