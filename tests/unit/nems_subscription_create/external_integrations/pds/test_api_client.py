@@ -93,6 +93,6 @@ def test_get_patient_details__get_valid_access_token__subsequent_authorization(
 
     # then
     if access_token_expires_at > datetime.utcnow():
-        assert post_oauth2_token_patched.called
-    else:
         assert not post_oauth2_token_patched.called
+    else:
+        assert post_oauth2_token_patched.called
