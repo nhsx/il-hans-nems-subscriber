@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime, timedelta
-from functools import lru_cache
 from typing import Optional
 
 import jwt
@@ -73,17 +72,30 @@ class PDSApiClient:
             self._access_token_expires_at is not None
             and self._access_token_expires_at > datetime.utcnow()
         ):
+            _LOGGER.info("Reusing valid access token")
             return self._access_token
 
+        _LOGGER.info(
+            "Creating new access token",
+            extra={
+                "_access_token_expires_at": self._access_token_expires_at,
+            },
+        )
         access_token_response = self.post_oauth2_token(encoded_jwt=self._generate_jwt())
         self._access_token = access_token_response.access_token
-        self._access_token_expires_at = access_token_response.issued_at + timedelta(
+        self._access_token_expires_at = datetime.utcnow() + timedelta(
             seconds=access_token_response.expires_in
         )
+        _LOGGER.info(
+            "Created new access token",
+            extra={
+                "_access_token_expires_at": self._access_token_expires_at,
+            },
+        )
+
         return self._access_token
 
     @staticmethod
-    @lru_cache(maxsize=1)
     def _generate_jwt() -> str:
         pds_settings = get_pds_settings()
         return jwt.encode(
