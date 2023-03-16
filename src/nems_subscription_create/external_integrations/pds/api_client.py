@@ -78,7 +78,6 @@ class PDSApiClient:
         _LOGGER.info(
             "Creating new access token",
             extra={
-                "_access_token": self._access_token,
                 "_access_token_expires_at": self._access_token_expires_at,
             },
         )
@@ -90,7 +89,6 @@ class PDSApiClient:
         _LOGGER.info(
             "Created new access token",
             extra={
-                "_access_token": self._access_token,
                 "_access_token_expires_at": self._access_token_expires_at,
             },
         )
