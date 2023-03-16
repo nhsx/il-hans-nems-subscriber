@@ -1,5 +1,6 @@
 import os
 from unittest.mock import MagicMock
+from uuid import UUID
 
 import pytest
 from pytest_mock import MockFixture
@@ -30,6 +31,7 @@ def test_valid_patient_data(patient_data_file_path: str, mocker: MockFixture):
 
     response = lambda_handler({"body": body}, MagicMock())
     assert response["statusCode"] == 201
+    assert UUID(response["headers"]["X-Subscription-Id"])
 
 
 @pytest.mark.parametrize(
