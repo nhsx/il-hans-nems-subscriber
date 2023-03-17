@@ -7,6 +7,7 @@ from external_integrations.notify.settings import get_notify_settings
 from internal_integrations.management_interface.api_client import (
     ManagementInterfaceApiClient,
 )
+from hashlib import scrypt
 
 
 class NotifyCareProviderController:
@@ -35,7 +36,9 @@ class NotifyCareProviderController:
     ) -> None:
         notify_settings = get_notify_settings()
         care_provider_response = self.management_interface_api_client.get_care_provider(
-            care_recipient_pseudo_id=patient_nhs_number
+            care_recipient_pseudo_id=self._generate_pseudo_id(
+                nhs_number=patient_nhs_number, birth_date=patient_birth_date
+            )
         )
         self.notifications_api_client.send_email_notification(
             email_address=care_provider_response.telecom[0].value,
@@ -50,3 +53,15 @@ class NotifyCareProviderController:
                 "event_date_str": str(admitted_at.time()),
             },
         )
+
+    @staticmethod
+    def _generate_pseudo_id(nhs_number: str, birth_date: date) -> str:
+        # https://nhsx.github.io/il-hans-infrastructure/adrs/003-Do-not-use-NEMS-or-MESH
+        return scrypt(
+            nhs_number.encode(),
+            salt=str(birth_date).encode(),
+            n=32768,
+            r=12,
+            p=6,
+            maxmem=2**26,
+        ).hex()
