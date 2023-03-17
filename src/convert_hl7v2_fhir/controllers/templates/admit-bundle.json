@@ -1,0 +1,181 @@
+{# Using passed through uuid_method - generate bundle UUIDs #}
+{% set uuid_message_header = uuid_method() %}
+{% set uuid_patient = uuid_method() %}
+{% set uuid_location = uuid_method() %}
+{% set uuid_organization = uuid_method() %}
+{% set uuid_encounter = uuid_method() %}
+{
+    "resourceType": "Bundle",
+    "type": "message",
+    "meta": {
+        "profile":  [
+            "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-Bundle"
+        ]
+    },
+    "entry":  [
+        {
+            "fullUrl": "urn:uuid:{{uuid_message_header}}",
+            "resource": {
+                "resourceType": "MessageHeader",
+                "id": "{{uuid_message_header}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-MessageHeader"
+                    ]
+                },
+                "eventCoding": {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0003",
+                    "code": "{{get(msg, 'EVN', 0, 1)}}"
+                },
+                "source": {
+                    "endpoint": "http://example.com/fhir/R4"
+                },
+                "responsible": {
+                    "reference": "urn:uuid:{{uuid_organization}}"
+                },
+                "focus":  [
+                    {
+                        "reference": "urn:uuid:{{uuid_encounter}}"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{ uuid_patient }}",
+            "resource": {
+                "resourceType": "Patient",
+                "id": "{{ uuid_patient }}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Patient"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhs-number",
+                        "value": "{{ get_nhs_number(msg) }}",
+                        "extension":  [
+                            {
+                                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
+                                "valueCodeableConcept": {
+                                    "coding":  [
+                                        {
+                                            "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland",
+                                            "code": "01",
+                                            "display": "Number present and verified"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "name":  [
+                    {
+                        "use": "usual",
+                        "family": "{{get(msg, 'PID', 0, 5, 0, 0)}}",
+                        {% if get(msg, 'PID', 0, 5, 0, 1) %}"given":  [
+                            "{{get(msg, 'PID', 0, 5, 0, 1)}}"{% if get(msg, 'PID', 0, 5, 0, 2) %},
+                            "{{get(msg, 'PID', 0, 5, 0, 2)}}"
+                            {% endif %}
+                        ]{% endif %}
+                    }
+                ],
+                "birthDate": "{{get(msg, 'PID', 0, 7) | fhirdate }}"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{ uuid_location }}",
+            "resource": {
+                "resourceType": "Location",
+                "id": "{{ uuid_location }}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Location"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-site-code",
+                        "value": "{{ meta.location.identifier.value }}"
+                    }
+                ],
+                "status": "active",
+                "name": "{{ get(msg, 'PV1', 0, 3, 0, 0) }}, {{ get(msg, 'PV1', 0, 3, 0, 3) }}",
+                "address": {
+                    "line":  [
+                        "{{get(msg, 'PV1', 0, 3, 0, 0)}}",
+                        "{{get(msg, 'PV1', 0, 3, 0, 3)}}"
+                    ],
+                    "city": "{{ meta.location.address.city }}",
+                    "postalCode": "{{ meta.location.address.postalCode }}"
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuid_organization}}",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "{{uuid_organization}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Organization"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "{{ meta.organization.identifier.value }}"
+                    }
+                ],
+                "name": "{{ meta.organization.name }}"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuid_encounter}}",
+            "resource": {
+                "resourceType": "Encounter",
+                "id": "{{uuid_encounter}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Encounter"
+                    ]
+                },
+                "status": "in-progress",
+                "subject": {
+                    "reference": "urn:uuid:{{uuid_patient}}"
+                },
+                "class": {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "IMP",
+                    "display": "inpatient encounter"
+                },
+                "period": {
+                    "start": "2023-02-20T09:04:23Z"
+                },
+                "location":  [
+                    {
+                        "status": "active",
+                        "location": {
+                            "reference": "urn:uuid:{{uuid_location}}"
+                        }
+                    }
+                ],
+                "extension":  [
+                    {
+                        "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AdmissionMethod",
+                        "valueCodeableConcept": {
+                            "coding":  [
+                                {
+                                    "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-AdmissionMethodEngland",
+                                    "code": "21",
+                                    "display": "Accident and emergency or dental casualty department of the Health Care Provider"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

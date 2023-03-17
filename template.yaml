@@ -81,9 +81,23 @@ Resources:
     DeadLetterQueue:
       Type: SQS
       TargetArn: !GetAtt DeadLetterQueue.Arn
-
   DeadLetterQueue:
     Type: AWS::SQS::Queue
+  ConvertHL7v2ToFhirFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/convert_hl7v2_fhir/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Description: Lambda function that converts HL7v2 (over HTTPs) to FHIR
+      Architectures:
+        - x86_64
+      Events:
+        NEMSSubscriptionCreate:
+          Type: Api
+          Properties:
+            Path: /convert
+            Method: post
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

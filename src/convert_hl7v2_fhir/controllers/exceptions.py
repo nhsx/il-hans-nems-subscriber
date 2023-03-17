@@ -1,0 +1,3 @@
+
+class MissingNHSNumber(Exception):
+    pass
