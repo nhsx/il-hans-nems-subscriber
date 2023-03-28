@@ -1,9 +1,3 @@
-{# Using passed through uuid_method - generate bundle UUIDs #}
-{% set uuid_message_header = uuid_method() %}
-{% set uuid_patient = uuid_method() %}
-{% set uuid_location = uuid_method() %}
-{% set uuid_organization = uuid_method() %}
-{% set uuid_encounter = uuid_method() %}
 {
     "resourceType": "Bundle",
     "type": "message",
@@ -14,10 +8,10 @@
     },
     "entry":  [
         {
-            "fullUrl": "urn:uuid:{{uuid_message_header}}",
+            "fullUrl": "urn:uuid:{{uuids.messageHeader}}",
             "resource": {
                 "resourceType": "MessageHeader",
-                "id": "{{uuid_message_header}}",
+                "id": "{{uuids.messageHeader}}",
                 "meta": {
                     "profile":  [
                         "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-MessageHeader"
@@ -31,20 +25,20 @@
                     "endpoint": "http://example.com/fhir/R4"
                 },
                 "responsible": {
-                    "reference": "urn:uuid:{{uuid_organization}}"
+                    "reference": "urn:uuid:{{uuids.organization}}"
                 },
                 "focus":  [
                     {
-                        "reference": "urn:uuid:{{uuid_encounter}}"
+                        "reference": "urn:uuid:{{uuids.encounter}}"
                     }
                 ]
             }
         },
         {
-            "fullUrl": "urn:uuid:{{ uuid_patient }}",
+            "fullUrl": "urn:uuid:{{uuids.patient}}",
             "resource": {
                 "resourceType": "Patient",
-                "id": "{{ uuid_patient }}",
+                "id": "{{uuids.patient}}",
                 "meta": {
                     "profile":  [
                         "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Patient"
@@ -73,22 +67,22 @@
                 "name":  [
                     {
                         "use": "usual",
-                        "family": "{{get(msg, 'PID', 0, 5, 0, 0)}}",
-                        {% if get(msg, 'PID', 0, 5, 0, 1) %}"given":  [
+                        "family": "{{get(msg, 'PID', 0, 5, 0, 0)}}"{% if get(msg, 'PID', 0, 5, 0, 1) %},
+                        "given":  [
                             "{{get(msg, 'PID', 0, 5, 0, 1)}}"{% if get(msg, 'PID', 0, 5, 0, 2) %},
                             "{{get(msg, 'PID', 0, 5, 0, 2)}}"
                             {% endif %}
                         ]{% endif %}
                     }
                 ],
-                "birthDate": "{{get(msg, 'PID', 0, 7) | fhirdate }}"
+                "birthDate": "{{get(msg, 'PID', 0, 7) | convert_date }}"
             }
         },
         {
-            "fullUrl": "urn:uuid:{{ uuid_location }}",
+            "fullUrl": "urn:uuid:{{uuids.location}}",
             "resource": {
                 "resourceType": "Location",
-                "id": "{{ uuid_location }}",
+                "id": "{{uuids.location}}",
                 "meta": {
                     "profile":  [
                         "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Location"
@@ -113,10 +107,10 @@
             }
         },
         {
-            "fullUrl": "urn:uuid:{{uuid_organization}}",
+            "fullUrl": "urn:uuid:{{uuids.organization}}",
             "resource": {
                 "resourceType": "Organization",
-                "id": "{{uuid_organization}}",
+                "id": "{{uuids.organization}}",
                 "meta": {
                     "profile":  [
                         "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Organization"
@@ -132,10 +126,10 @@
             }
         },
         {
-            "fullUrl": "urn:uuid:{{uuid_encounter}}",
+            "fullUrl": "urn:uuid:{{uuids.encounter}}",
             "resource": {
                 "resourceType": "Encounter",
-                "id": "{{uuid_encounter}}",
+                "id": "{{uuids.encounter}}",
                 "meta": {
                     "profile":  [
                         "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Encounter"
@@ -143,21 +137,21 @@
                 },
                 "status": "in-progress",
                 "subject": {
-                    "reference": "urn:uuid:{{uuid_patient}}"
+                    "reference": "urn:uuid:{{uuids.patient}}"
                 },
                 "class": {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-                    "code": "IMP",
-                    "display": "inpatient encounter"
+                    "system": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).system}}",
+                    "code": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).code}}",
+                    "display": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).display}}"
                 },
                 "period": {
-                    "start": "2023-02-20T09:04:23Z"
+                    "start": "{{get(msg, 'PV1', 0, 44) | convert_datetime}}"
                 },
                 "location":  [
                     {
                         "status": "active",
                         "location": {
-                            "reference": "urn:uuid:{{uuid_location}}"
+                            "reference": "urn:uuid:{{uuids.location}}"
                         }
                     }
                 ],
@@ -168,8 +162,7 @@
                             "coding":  [
                                 {
                                     "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-AdmissionMethodEngland",
-                                    "code": "21",
-                                    "display": "Accident and emergency or dental casualty department of the Health Care Provider"
+                                    "code": "{{(get(msg, 'PV1', 0, 4) | map_admissionmethod).code}}"
                                 }
                             ]
                         }
