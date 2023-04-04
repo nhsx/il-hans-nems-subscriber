@@ -38,10 +38,11 @@ class v2ErrorSeverity(Enum):
 def generate_MSH_segment(
     recipient_app: str,
     recipient_facility: str,
+    message_control_id: Optional[str] = None
     ):
     
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    msg_id = uuid4()
+    msg_id = message_control_id or uuid4()
 
     # see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/MSH
     return f"MSH|^~\\&|HANS|NHSENGLAND|{recipient_app}|{recipient_facility}|{timestamp}||ACK^A01|{msg_id}|||||||||||||||"
@@ -69,29 +70,30 @@ def generate_ACK_message(
         # generate an ACK based on rejecting the message and processing no further
         accept_code = "AR"
         # for ERR layout, see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/ERR
-        segment_err = f"\nERR|||{hl7_error_code}|{error_severity}||||{error_message}"
+        segment_err = f"\rERR|||{hl7_error_code}|{error_severity}||||{error_message}"
     else:
         # generate an ACK based on accepting the message and sending care provider email as response
         accept_code = "AA"
-        # custom defined segment (see tech docs)
-        segment_zha = f"\nZHA|{care_provider_orgname}|{care_provider_email}"
+        if care_provider_email:
+            # custom defined segment (see tech docs)
+            segment_zha = f"\rZHA|{care_provider_orgname}|{care_provider_email}"
         
         
     # see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/MSA
     segment_msa = f"MSA|{accept_code}|{replying_to_msgid}"
-    return segment_msh + "\n" + segment_msa + segment_err + segment_zha
+    return segment_msh + "\r" + segment_msa + segment_err + segment_zha
 
 
-print(generate_ACK_message(
-    recipient_app="HOMERTON_TIE",
-    recipient_facility="HOMERTON",
-    replying_to_msgid="MSG00001",
-    hl7_error_code=v2ErrorCode.REQUIRED_FIELD_MISSING,
-    error_severity=v2ErrorSeverity.ERROR,
-    error_message="Missing NHS Number") + "\n")
-print(generate_ACK_message(
-    recipient_app="HOMERTON_TIE",
-    recipient_facility="HOMERTON",
-    care_provider_email="test@nhs.net",
-    care_provider_orgname="Test Care Provider - Reading Branch",
-    replying_to_msgid="MSG00002"))
+#print(generate_ACK_message(
+#    recipient_app="HOMERTON_TIE",
+#    recipient_facility="HOMERTON",
+#    replying_to_msgid="MSG00001",
+#    hl7_error_code=v2ErrorCode.REQUIRED_FIELD_MISSING,
+#    error_severity=v2ErrorSeverity.ERROR,
+#    error_message="Missing NHS Number") + "\n")
+#print(generate_ACK_message(
+#    recipient_app="HOMERTON_TIE",
+#    recipient_facility="HOMERTON",
+#    care_provider_email="test@nhs.net",
+#    care_provider_orgname="Test Care Provider - Reading Branch",
+#    replying_to_msgid="MSG00002"))

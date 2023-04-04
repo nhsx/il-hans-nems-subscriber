@@ -45,10 +45,9 @@ def get_str(msg: Message,
         return str(ret) if str(ret) != "" else None
 
 def get_nhs_number(msg: Message) -> str:
-        # gets the list of identifiers
         ids = list(get(msg, "PID", 0, 3))
 
-        # also add on the single ID that may proceed it (if it exists and is not in list)
+        # need to also add on the single ID prior (this may or may not be a duplicate)
         if get(msg, "PID", 0, 2, 0):
             ids.append(get(msg, "PID", 0, 2, 0))
 
