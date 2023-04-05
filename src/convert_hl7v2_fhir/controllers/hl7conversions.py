@@ -1,4 +1,6 @@
-from enum import Enum
+from typing import Optional
+
+from controllers.exceptions import MissingFieldOrComponentError
 
 # note - this is pilot partner specific
 #  so will need implementing with our pilot
@@ -60,7 +62,7 @@ ENCOUNTER_CLASS_MAP = {
     }
 }
 
-def to_fhir_date(hl7_DTM : str) -> str:
+def to_fhir_date(hl7_DTM : Optional[str]) -> str:
     if (len(hl7_DTM) > 8):
         hl7_DTM = hl7_DTM[:8]
     

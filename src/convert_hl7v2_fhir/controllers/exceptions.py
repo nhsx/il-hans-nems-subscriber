@@ -1,6 +1,12 @@
 
-class MissingNHSNumber(Exception):
+class MissingNHSNumberError(Exception):
     pass
 
-class InvalidNHSNumber(Exception):
+class InvalidNHSNumberError(Exception):
+    pass
+
+class MissingSegmentError(Exception):
+    pass
+
+class MissingFieldOrComponentError(Exception):
     pass

@@ -96,21 +96,20 @@ Resources:
         ConvertHL7v2:
           Type: Api
           Properties:
-            Path: /convert/v2
+            Path: /message/hl7v2
             Method: post
       Timeout: 30
       Environment:
         Variables:
-          SQS_CONVERTED_QUEUE_URL: !GetAtt ConvertedQueue.QueueUrl
+          SQS_CONVERTED_QUEUE_URL: !GetAtt UnprocessedMessageQueue.QueueUrl
       Policies:
       - Statement:
         - Sid: AllowQueueSendMessage
           Effect: Allow
           Action:
           - sqs:SendMessage
-          Resource: 'arn:aws:sqs:*:*:*'
-  ConvertedQueue:
-    Type: AWS::SQS::Queue
+          Resource: !GetAtt UnprocessedMessageQueue.Arn
+    
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -143,6 +142,6 @@ Outputs:
   EmailCareProviderFunctionIamRole:
     Description: "Implicit IAM Role created for Email Care Provider function"
     Value: !GetAtt EmailCareProviderFunctionRole.Arn
-  ConvertedQueueUrl:
-    Description: "URL for messages that have been converted"
-    Value: !GetAtt ConvertedQueue.QueueUrl
+  UnprocessedMessageQueueUrl:
+    Description: "URL for queue containing messages to be processed"
+    Value: !GetAtt UnprocessedMessageQueue.QueueUrl

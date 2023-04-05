@@ -3,8 +3,6 @@ from datetime import datetime
 from typing import Optional, Literal
 from uuid import uuid4
 
-from controllers.exceptions import InvalidNHSNumber, MissingNHSNumber
-
 # enum of v2 error codes (from https://hl7-definition.caristix.com/v2/HL7v2.8/Tables/0357)
 class v2ErrorCode(Enum):
     ACCEPTED = "0"
@@ -82,18 +80,3 @@ def generate_ACK_message(
     # see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/MSA
     segment_msa = f"MSA|{accept_code}|{replying_to_msgid}"
     return segment_msh + "\r" + segment_msa + segment_err + segment_zha
-
-
-#print(generate_ACK_message(
-#    recipient_app="HOMERTON_TIE",
-#    recipient_facility="HOMERTON",
-#    replying_to_msgid="MSG00001",
-#    hl7_error_code=v2ErrorCode.REQUIRED_FIELD_MISSING,
-#    error_severity=v2ErrorSeverity.ERROR,
-#    error_message="Missing NHS Number") + "\n")
-#print(generate_ACK_message(
-#    recipient_app="HOMERTON_TIE",
-#    recipient_facility="HOMERTON",
-#    care_provider_email="test@nhs.net",
-#    care_provider_orgname="Test Care Provider - Reading Branch",
-#    replying_to_msgid="MSG00002"))
