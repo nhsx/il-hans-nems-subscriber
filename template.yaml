@@ -33,7 +33,7 @@ Resources:
     Properties:
       CodeUri: src/nems_subscription_create/
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       Description: Lambda function that creates a NEMS subscription for a given CareRecipient
       Architectures:
         - x86_64
@@ -57,7 +57,7 @@ Resources:
     Properties:
       CodeUri: src/nems_subscription_delete/
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       Description: Lambda function that deletes a NEMS subscription for a given CareRecipient
       Architectures:
         - x86_64
@@ -72,7 +72,7 @@ Resources:
     Properties:
       CodeUri: src/mesh_mailbox_read/
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       Description: Lambda function that reads messages from the MESH mailbox and places them onto a queue
       Architectures:
         - x86_64
@@ -91,7 +91,7 @@ Resources:
     Properties:
       CodeUri: src/email_care_provider
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.9
       Description: Lambda function that processes messages from the queue and sends emails to care providers
       Architectures:
         - x86_64
@@ -105,9 +105,34 @@ Resources:
     DeadLetterQueue:
       Type: SQS
       TargetArn: !GetAtt DeadLetterQueue.Arn
-
   DeadLetterQueue:
     Type: AWS::SQS::Queue
+    ConvertHL7v2ToFhirFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/convert_hl7v2_fhir/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Description: Lambda function that converts HL7v2 (over HTTPs) to FHIR
+      Architectures:
+        - x86_64
+      Events:
+        ConvertHL7v2:
+          Type: Api
+          Properties:
+            Path: /message/hl7v2
+            Method: post
+      Timeout: 30
+      Environment:
+        Variables:
+          SQS_CONVERTED_QUEUE_URL: !GetAtt UnprocessedMessageQueue.QueueUrl
+      Policies:
+      - Statement:
+        - Sid: AllowQueueSendMessage
+          Effect: Allow
+          Action:
+          - sqs:SendMessage
+          Resource: !GetAtt UnprocessedMessageQueue.Arn
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -140,3 +165,6 @@ Outputs:
   EmailCareProviderFunctionIamRole:
     Description: "Implicit IAM Role created for Email Care Provider function"
     Value: !GetAtt EmailCareProviderFunctionRole.Arn
+  UnprocessedMessageQueueUrl:
+    Description: "URL for queue containing messages to be processed"
+    Value: !GetAtt UnprocessedMessageQueue.QueueUrl

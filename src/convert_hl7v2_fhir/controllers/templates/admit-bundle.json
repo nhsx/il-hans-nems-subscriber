@@ -1,0 +1,174 @@
+{
+    "resourceType": "Bundle",
+    "type": "message",
+    "meta": {
+        "profile":  [
+            "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-Bundle"
+        ]
+    },
+    "entry":  [
+        {
+            "fullUrl": "urn:uuid:{{uuids.messageHeader}}",
+            "resource": {
+                "resourceType": "MessageHeader",
+                "id": "{{uuids.messageHeader}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-MessageHeader"
+                    ]
+                },
+                "eventCoding": {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0003",
+                    "code": "{{get(msg, 'EVN', 0, 1)}}"
+                },
+                "source": {
+                    "endpoint": "http://example.com/fhir/R4"
+                },
+                "responsible": {
+                    "reference": "urn:uuid:{{uuids.organization}}"
+                },
+                "focus":  [
+                    {
+                        "reference": "urn:uuid:{{uuids.encounter}}"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuids.patient}}",
+            "resource": {
+                "resourceType": "Patient",
+                "id": "{{uuids.patient}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Patient"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhs-number",
+                        "value": "{{ get_nhs_number(msg) }}",
+                        "extension":  [
+                            {
+                                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
+                                "valueCodeableConcept": {
+                                    "coding":  [
+                                        {
+                                            "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland",
+                                            "code": "01",
+                                            "display": "Number present and verified"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "name":  [
+                    {
+                        "use": "usual",
+                        "family": "{{get(msg, 'PID', 0, 5, 0, 0)}}"{% if get(msg, 'PID', 0, 5, 0, 1) %},
+                        "given":  [
+                            "{{get(msg, 'PID', 0, 5, 0, 1)}}"{% if get(msg, 'PID', 0, 5, 0, 2) %},
+                            "{{get(msg, 'PID', 0, 5, 0, 2)}}"
+                            {% endif %}
+                        ]{% endif %}
+                    }
+                ],
+                "birthDate": "{{get(msg, 'PID', 0, 7) | convert_date }}"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuids.location}}",
+            "resource": {
+                "resourceType": "Location",
+                "id": "{{uuids.location}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Location"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-site-code",
+                        "value": "{{ meta.location.identifier.value }}"
+                    }
+                ],
+                "status": "active",
+                "name": "{{ get(msg, 'PV1', 0, 3, 0, 0) }}, {{ get(msg, 'PV1', 0, 3, 0, 3) }}",
+                "address": {
+                    "line":  [
+                        "{{get(msg, 'PV1', 0, 3, 0, 0)}}",
+                        "{{get(msg, 'PV1', 0, 3, 0, 3)}}"
+                    ],
+                    "city": "{{ meta.location.address.city }}",
+                    "postalCode": "{{ meta.location.address.postalCode }}"
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuids.organization}}",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "{{uuids.organization}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Organization"
+                    ]
+                },
+                "identifier":  [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "{{ meta.organization.identifier.value }}"
+                    }
+                ],
+                "name": "{{ meta.organization.name }}"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:{{uuids.encounter}}",
+            "resource": {
+                "resourceType": "Encounter",
+                "id": "{{uuids.encounter}}",
+                "meta": {
+                    "profile":  [
+                        "https://fhir.simplifier.net/Hospital-Activity-Notification-Service/StructureDefinition/ActivityNotification-UKCore-Encounter"
+                    ]
+                },
+                "status": "in-progress",
+                "subject": {
+                    "reference": "urn:uuid:{{uuids.patient}}"
+                },
+                "class": {
+                    "system": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).system}}",
+                    "code": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).code}}",
+                    "display": "{{(get(msg, 'PV1', 0, 2) | map_encounterclass).display}}"
+                },
+                "period": {
+                    "start": "{{get(msg, 'PV1', 0, 44) | convert_datetime}}"
+                },
+                "location":  [
+                    {
+                        "status": "active",
+                        "location": {
+                            "reference": "urn:uuid:{{uuids.location}}"
+                        }
+                    }
+                ],
+                "extension":  [
+                    {
+                        "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AdmissionMethod",
+                        "valueCodeableConcept": {
+                            "coding":  [
+                                {
+                                    "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-AdmissionMethodEngland",
+                                    "code": "{{(get(msg, 'PV1', 0, 4) | map_admissionmethod).code}}"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
