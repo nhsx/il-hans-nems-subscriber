@@ -34,7 +34,6 @@ class NotifyCareProviderController:
         location_name: str,
         admitted_at: datetime
     ) -> None:
-        notify_settings = get_notify_settings()
         care_provider_response = self.management_interface_api_client.get_care_provider(
             care_recipient_pseudo_id=self._generate_pseudo_id(
                 nhs_number=patient_nhs_number, birth_date=patient_birth_date
@@ -42,7 +41,7 @@ class NotifyCareProviderController:
         )
         self.notifications_api_client.send_email_notification(
             email_address=care_provider_response.telecom[0].value,
-            template_id=notify_settings.email_templates.ADMISSION,
+            template_id=get_notify_settings().email_templates.ADMISSION,
             personalisation={
                 "subj_given_name": patient_given_name,
                 "subj_family_name": patient_family_name,

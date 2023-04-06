@@ -4,7 +4,7 @@ from pydantic import BaseSettings, HttpUrl
 
 
 class ManagementInterfaceSettings(BaseSettings):
-    base_url: HttpUrl = "http://localhost:8000"
+    base_url: str = "http://localhost:8000"
 
     class Config:
         env_prefix = "MANAGEMENT_INTERFACE_"

@@ -2,7 +2,6 @@ from typing import Optional
 
 import requests
 from aws_lambda_powertools import Logger
-from pydantic import HttpUrl
 
 from internal_integrations.management_interface.exceptions import (
     CareProviderLocationNotFound,
@@ -19,20 +18,18 @@ _LOGGER = Logger()
 class ManagementInterfaceApiClient:
     def __init__(
         self,
-        base_url: Optional[HttpUrl] = None,
+        base_url: Optional[str] = None,
         session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
-        self.base_url: HttpUrl = (
-            base_url or get_management_interface_settings().base_url
-        )
+        self.base_url: str = base_url or get_management_interface_settings().base_url
 
     def get_care_provider(
         self, *, care_recipient_pseudo_id: str
     ) -> CareProviderResponse:
-        url = f"{self.base_url}/care-provider-location/_search"
+        url = f"{self.base_url}/care-provider-location/_search/"
         data = {"_careRecipientPseudoId": care_recipient_pseudo_id}
-        response = self.session.post(url, json=data)
+        response = self.session.post(url, data=data)
         if response.status_code in range(400, 500):
             _LOGGER.warning({"response_text": response.text})
             raise CareProviderLocationNotFound
