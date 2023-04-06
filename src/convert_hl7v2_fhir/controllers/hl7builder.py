@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional, Literal
 from uuid import uuid4
 
+
 # enum of v2 error codes (from https://hl7-definition.caristix.com/v2/HL7v2.8/Tables/0357)
 class v2ErrorCode(Enum):
     ACCEPTED = "0"
@@ -23,6 +24,7 @@ class v2ErrorCode(Enum):
     def __str__(self):
         return self.value
 
+
 # enum of v2 severity codes (from https://hl7-definition.caristix.com/v2/HL7v2.8/Tables/0516)
 class v2ErrorSeverity(Enum):
     ERROR = "E"
@@ -33,12 +35,12 @@ class v2ErrorSeverity(Enum):
     def __str__(self):
         return self.value
 
+
 def generate_MSH_segment(
     recipient_app: str,
     recipient_facility: str,
-    message_control_id: Optional[str] = None
-    ):
-    
+    message_control_id: Optional[str] = None,
+):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     msg_id = message_control_id or uuid4()
 
@@ -55,9 +57,8 @@ def generate_ACK_message(
     care_provider_orgname: Optional[str] = None,
     hl7_error_code: Optional[str] = None,
     error_severity: Optional[str] = None,
-    error_message: Optional[str] = None
-    ):
-
+    error_message: Optional[str] = None,
+):
     segment_msh = generate_MSH_segment(recipient_app, recipient_facility)
 
     segment_err = ""
@@ -75,8 +76,7 @@ def generate_ACK_message(
         if care_provider_email:
             # custom defined segment (see tech docs)
             segment_zha = f"\rZHA|{care_provider_orgname}|{care_provider_email}"
-        
-        
+
     # see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/MSA
     segment_msa = f"MSA|{accept_code}|{replying_to_msgid}"
     return segment_msh + "\r" + segment_msa + segment_err + segment_zha
