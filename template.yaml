@@ -5,11 +5,26 @@ Description: >
 
   Sample SAM Template for nems-subscriber
 
+Parameters:
+  pdsJwtAud:
+    Type: String
+    Default: "https://int.api.service.nhs.uk/oauth2/token"
+  pdsJwtKid:
+    Type: String
+    Default: "int-1"
+  pdsBaseUrl:
+    Type: String
+    Default: "https://int.api.service.nhs.uk"
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     MemorySize: 128
+    Environment:
+      Variables:
+        POWERTOOLS_SERVICE_NAME: hans
+        LOG_LEVEL: INFO
 
 # AWS SAM Spec is here: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
 Resources:
@@ -26,8 +41,17 @@ Resources:
         NEMSSubscriptionCreate:
           Type: Api
           Properties:
-            Path: /manage_subscription
+            Path: /subscription
             Method: post
+      Environment:
+        Variables:
+          PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
+          PDS_JWT_SUB: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_SUB}}"
+          PDS_JWT_ISS: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_ISS}}"
+          PDS_API_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_API_KEY}}"
+          PDS_JWT_AUD: !Ref pdsJwtAud
+          PDS_JWKS_KID: !Ref pdsJwtKid
+          PDS_BASE_URL: !Ref pdsBaseUrl
   NEMSSubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -41,7 +65,7 @@ Resources:
         NEMSSubscriptionDelete:
           Type: Api
           Properties:
-            Path: /manage_subscription
+            Path: /subscription/{id}
             Method: delete
   MESHCheckMailboxFunction:
     Type: AWS::Serverless::Function
@@ -83,7 +107,7 @@ Resources:
       TargetArn: !GetAtt DeadLetterQueue.Arn
   DeadLetterQueue:
     Type: AWS::SQS::Queue
-  ConvertHL7v2ToFhirFunction:
+    ConvertHL7v2ToFhirFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/convert_hl7v2_fhir/
@@ -109,7 +133,6 @@ Resources:
           Action:
           - sqs:SendMessage
           Resource: !GetAtt UnprocessedMessageQueue.Arn
-    
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

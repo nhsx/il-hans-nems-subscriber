@@ -1,22 +1,21 @@
-# import requests
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities.typing import LambdaContext
+
+from controllers.notify_care_provider import NotifyCareProviderController
+from schemas import HANSBundle
+
+_LOGGER = Logger()
 
 
-def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        SQS Queue Messages
-
-        Event doc: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-    """
-
-    # TODO: lookup correct care provider from the database and send an email
-
-    return None
+@_LOGGER.inject_lambda_context(log_event=True)
+def lambda_handler(event: dict, context: LambdaContext):
+    for queue_message in event:
+        bundle = HANSBundle.parse_raw(queue_message["body"])
+        NotifyCareProviderController().send_email_to_care_provider(
+            patient_nhs_number=bundle.patient.identifier[0].value,
+            patient_given_name=bundle.patient.name[0].given[0],
+            patient_family_name=bundle.patient.name[0].family,
+            patient_birth_date=bundle.patient.birthDate,
+            location_name=bundle.location.name,
+            admitted_at=bundle.encounter.period.start,
+        )
