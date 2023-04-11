@@ -28,6 +28,24 @@ Globals:
 
 # AWS SAM Spec is here: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
 Resources:
+  DomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: api-staging.hans.service.thepsc.co.uk
+      ValidationMethod: DNS
+      DomainValidationOptions:
+      - DomainName: api-staging.hans.service.thepsc.co.uk
+        HostedZoneId: Z0749399NWCFPUQORL8R
+  APIGatewayPublic:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: Domain configured API gateway for public-facing APIs
+      Domain:
+        CertificateArn: !Ref DomainCertificate
+        DomainName: api-staging.hans.service.thepsc.co.uk
+        Route53:
+          HostedZoneId: Z0749399NWCFPUQORL8R
+      StageName: Prod
   NEMSSubscriptionCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -43,12 +61,13 @@ Resources:
           Properties:
             Path: /subscription
             Method: post
+            RestApiId: !Ref APIGatewayPublic
       Environment:
         Variables:
-          PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
-          PDS_JWT_SUB: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_SUB}}"
-          PDS_JWT_ISS: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_JWT_ISS}}"
-          PDS_API_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:695107448371:secret:il-hans-nems-subscriber-bbe2Xv:SecretString:PDS_API_KEY}}"
+          PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
+          PDS_JWT_SUB: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_SUB}}"
+          PDS_JWT_ISS: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_ISS}}"
+          PDS_API_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_API_KEY}}"
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
@@ -67,23 +86,7 @@ Resources:
           Properties:
             Path: /subscription/{id}
             Method: delete
-  MESHCheckMailboxFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/mesh_mailbox_read/
-      Handler: app.lambda_handler
-      Runtime: python3.9
-      Description: Lambda function that reads messages from the MESH mailbox and places them onto a queue
-      Architectures:
-        - x86_64
-      Events:
-        MESHMailboxPoll:
-          Type: Schedule
-          Properties:
-            Schedule: rate(5 minutes)
-            Name: MESH-mailbox-polling
-            Description: Triggers this read function every 5 minutes in line with MESH specification
-            Enabled: True
+            RestApiId: !Ref APIGatewayPublic
   UnprocessedMessageQueue:
     Type: AWS::SQS::Queue
   EmailCareProviderFunction:
@@ -102,12 +105,15 @@ Resources:
             Queue: !GetAtt UnprocessedMessageQueue.Arn
             BatchSize: 10
             Enabled: True
-    DeadLetterQueue:
-      Type: SQS
-      TargetArn: !GetAtt DeadLetterQueue.Arn
+      Environment:
+        Variables:
+          MANAGEMENT_INTERFACE_BASE_URL: https://staging.hans.service.thepsc.co.uk/
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeadLetterQueue.Arn
   DeadLetterQueue:
     Type: AWS::SQS::Queue
-    ConvertHL7v2ToFhirFunction:
+  ConvertHL7v2ToFhirFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/convert_hl7v2_fhir/
@@ -122,6 +128,7 @@ Resources:
           Properties:
             Path: /message/hl7v2
             Method: post
+            RestApiId: !Ref APIGatewayPublic
       Timeout: 30
       Environment:
         Variables:
@@ -133,6 +140,8 @@ Resources:
           Action:
           - sqs:SendMessage
           Resource: !GetAtt UnprocessedMessageQueue.Arn
+  
+      
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -140,7 +149,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ManageAPI:
     Description: "API Gateway endpoint URL for Prod stage for Create NEMS Subscription function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/manage_subscription"
+    Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod/subscription"
   NEMSSubscriptionCreateFunction:
     Description: "NEMS Subscription Create Lambda Function ARN"
     Value: !GetAtt NEMSSubscriptionCreateFunction.Arn

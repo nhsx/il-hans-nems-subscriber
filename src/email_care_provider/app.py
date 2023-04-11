@@ -9,7 +9,7 @@ _LOGGER = Logger()
 
 @_LOGGER.inject_lambda_context(log_event=True)
 def lambda_handler(event: dict, context: LambdaContext):
-    for queue_message in event:
+    for queue_message in event["Records"]:
         bundle = HANSBundle.parse_raw(queue_message["body"])
         NotifyCareProviderController().send_email_to_care_provider(
             patient_nhs_number=bundle.patient.identifier[0].value,
