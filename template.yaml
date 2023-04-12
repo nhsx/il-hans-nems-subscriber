@@ -130,6 +130,7 @@ Resources:
       Description: Lambda function that processes messages from the queue and sends emails to care providers
       Architectures:
         - x86_64
+      MemorySize: 512
       Events:
         NewUnprocessedMessage:
           Type: SQS
