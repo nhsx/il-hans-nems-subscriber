@@ -15,6 +15,18 @@ Parameters:
   pdsBaseUrl:
     Type: String
     Default: "https://int.api.service.nhs.uk"
+  managementInterfaceBaseUrl:
+    Type: String
+    Default: "https://staging.hans.service.thepsc.co.uk/"
+  domainName:
+    Type: String
+    Default: "api-staging.hans.service.thepsc.co.uk"
+  hostedZoneId:
+    Type: String
+    Default: "Z0749399NWCFPUQORL8R"
+  secretName:
+    Type: String
+    Default: "nhs-hans-staging"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -31,20 +43,20 @@ Resources:
   DomainCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: api-staging.hans.service.thepsc.co.uk
+      DomainName: !Ref domainName
       ValidationMethod: DNS
       DomainValidationOptions:
-      - DomainName: api-staging.hans.service.thepsc.co.uk
-        HostedZoneId: Z0749399NWCFPUQORL8R
+      - DomainName: !Ref domainName
+        HostedZoneId: !Ref hostedZoneId
   APIGatewayPublic:
     Type: AWS::Serverless::Api
     Properties:
       Description: Domain configured API gateway for public-facing APIs
       Domain:
         CertificateArn: !Ref DomainCertificate
-        DomainName: api-staging.hans.service.thepsc.co.uk
+        DomainName: !Ref domainName
         Route53:
-          HostedZoneId: Z0749399NWCFPUQORL8R
+          HostedZoneId: !Ref hostedZoneId
       StageName: Prod
   NEMSSubscriptionCreateFunction:
     Type: AWS::Serverless::Function
@@ -64,10 +76,26 @@ Resources:
             RestApiId: !Ref APIGatewayPublic
       Environment:
         Variables:
-          PDS_JWT_RSA_PRIVATE_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
-          PDS_JWT_SUB: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_SUB}}"
-          PDS_JWT_ISS: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_JWT_ISS}}"
-          PDS_API_KEY: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:058023429656:secret:henry-test/serverless-BdguMe:SecretString:PDS_API_KEY}}"
+          PDS_JWT_RSA_PRIVATE_KEY: !Join
+            - ""
+            - - "{{resolve:secretsmanager:"
+              - !Ref secretName
+              - ":SecretString:PDS_JWT_RSA_PRIVATE_KEY}}"
+          PDS_JWT_SUB: !Join
+            - ""
+            - - "{{resolve:secretsmanager:"
+              - !Ref secretName
+              - ":SecretString:PDS_JWT_SUB}}"
+          PDS_JWT_ISS: !Join
+            - ""
+            - - "{{resolve:secretsmanager:"
+              - !Ref secretName
+              - ":SecretString:PDS_JWT_ISS}}"
+          PDS_API_KEY: !Join
+            - ""
+            - - "{{resolve:secretsmanager:"
+              - !Ref secretName
+              - ":SecretString:PDS_API_KEY}}"
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
@@ -107,7 +135,12 @@ Resources:
             Enabled: True
       Environment:
         Variables:
-          MANAGEMENT_INTERFACE_BASE_URL: https://staging.hans.service.thepsc.co.uk/
+          MANAGEMENT_INTERFACE_BASE_URL: !Ref managementInterfaceBaseUrl
+          NOTIFY_API_KEY: !Join
+            - ""
+            - - "{{resolve:secretsmanager:"
+              - !Ref secretName
+              - ":SecretString:NOTIFY_API_KEY}}"
       DeadLetterQueue:
         Type: SQS
         TargetArn: !GetAtt DeadLetterQueue.Arn

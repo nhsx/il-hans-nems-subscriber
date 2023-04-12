@@ -2,11 +2,11 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "hans-staging"
+stack_name = "nhs-hans-staging"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-pq2uubsvq3ka"
-s3_prefix = "hans-staging"
+s3_prefix = "nhs-hans-staging"
 region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "pdsJwtAud=\"https://int.api.service.nhs.uk/oauth2/token\" pdsJwtKid=\"int-1\" pdsBaseUrl=\"https://int.api.service.nhs.uk\""
+parameter_overrides = "pdsJwtAud=\"https://int.api.service.nhs.uk/oauth2/token\" pdsJwtKid=\"int-1\" pdsBaseUrl=\"https://int.api.service.nhs.uk\" managementInterfaceBaseUrl=\"https://staging.hans.service.thepsc.co.uk/\" domainName=\"api-staging.hans.service.thepsc.co.uk\" hostedZoneId=\"Z0749399NWCFPUQORL8R\" secretName=\"nhs-hans-staging\""
 image_repositories = []
