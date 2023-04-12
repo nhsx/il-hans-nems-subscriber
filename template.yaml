@@ -117,6 +117,10 @@ Resources:
             RestApiId: !Ref APIGatewayPublic
   UnprocessedMessageQueue:
     Type: AWS::SQS::Queue
+    Properties:
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
+        maxReceiveCount: 10
   EmailCareProviderFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -141,9 +145,6 @@ Resources:
             - - "{{resolve:secretsmanager:"
               - !Ref secretName
               - ":SecretString:NOTIFY_API_KEY}}"
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DeadLetterQueue.Arn
   DeadLetterQueue:
     Type: AWS::SQS::Queue
   ConvertHL7v2ToFhirFunction:
