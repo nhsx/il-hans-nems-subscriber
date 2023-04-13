@@ -1,5 +1,4 @@
 def is_nhs_number_valid(nhs_number: str) -> bool:
-    # check length
     if len(nhs_number) != 10:
         return False
 
@@ -7,10 +6,10 @@ def is_nhs_number_valid(nhs_number: str) -> bool:
     check_digit = nhs_number[9]
     main_part = nhs_number[0:9]
 
-    sum = 0
+    sum_of_digits = 0
     for digit_index in range(0, 9):
-        sum += (10 - digit_index) * int(main_part[digit_index])
-    calculated_check_digit = 11 - (sum % 11)
+        sum_of_digits += (10 - digit_index) * int(main_part[digit_index])
+    calculated_check_digit = 11 - (sum_of_digits % 11)
 
     if calculated_check_digit == 10:
         return False
