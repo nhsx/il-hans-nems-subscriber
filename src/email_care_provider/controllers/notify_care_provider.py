@@ -48,8 +48,8 @@ class NotifyCareProviderController:
                 "recp_given_name": care_provider_response.name,
                 "subj_DOB": str(patient_birth_date),
                 "event_loc": location_name,
-                "event_time_str": str(admitted_at.date()),
-                "event_date_str": str(admitted_at.time()),
+                "event_time_str": str(admitted_at.time()),
+                "event_date_str": str(admitted_at.date()),
             },
         )
 
