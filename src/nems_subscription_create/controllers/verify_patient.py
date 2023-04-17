@@ -3,7 +3,7 @@ from typing import Optional
 
 from fhir.resources.humanname import HumanName
 
-from controllers.exceptions import (
+from controllers.hl7.exceptions import (
     NameMissmatch,
     BirthDateMissmatch,
     IncorrectNHSNumber,

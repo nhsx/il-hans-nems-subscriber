@@ -5,7 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 from pydantic.env_settings import SettingsError
 
-from controllers.exceptions import (
+from controllers.hl7.exceptions import (
     IncorrectNHSNumber,
     PatientNotFound,
     InternalError,
