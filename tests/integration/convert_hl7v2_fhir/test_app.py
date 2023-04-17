@@ -1,9 +1,6 @@
-import pytest
-
-from aws_lambda_powertools.utilities.typing import LambdaContext
 from hl7 import parse
-
-from app import lambda_handler, _send_to_sqs
+from convert_hl7v2_fhir import app
+from convert_hl7v2_fhir.app import lambda_handler
 
 msg_known_good = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20200508130643|||C006^Wolf^Kathy^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1|2590157853^^^SIMULATOR MRN^MRN|2590157853^^^SIMULATOR MRN^MRN~2478684691^^^NHSNBR^NHSNMBR||Esterkin^AKI Scenario 6^^^Miss^^CURRENT||19890118000000|F|||170 Juice Place^^London^^RW21 6KC^GBR^HOME||020 5368 1665^HOME|||||||||R^Other - Chinese^^^||||||||\rPD1|||FAMILY PRACTICE^^12345|\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^MainBuilding^5|28b|||C006^Wolf^Kathy^^^Dr^^^DRNBR^PRSNL^^^ORGDR|||MED|||||||||6145914547062969032^^^^visitid||||||||||||||||||||||ARRIVED|||20200508130643||"
 
@@ -27,7 +24,7 @@ def _create_lambda_body(v2msg: str) -> dict:
 
 
 def test_lambda_handler__ACK_message_in_body(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(_create_lambda_body(msg_known_good), _create_dummy_context())
     msg = parse(resp["body"])
@@ -37,7 +34,7 @@ def test_lambda_handler__ACK_message_in_body(mocker):
 
 
 def test_lambda_handler__ACK_correct_recipient(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(_create_lambda_body(msg_known_good), _create_dummy_context())
     msg = parse(resp["body"])
@@ -47,7 +44,7 @@ def test_lambda_handler__ACK_correct_recipient(mocker):
 
 
 def test_lambda_handler__good_message_AA(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(_create_lambda_body(msg_known_good), _create_dummy_context())
     msg = parse(resp["body"])
@@ -56,7 +53,7 @@ def test_lambda_handler__good_message_AA(mocker):
 
 
 def test_lambda_handler__invalid_nhs_num_AR(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(
         _create_lambda_body(msg_invalid_nhs_no), _create_dummy_context()
@@ -68,7 +65,7 @@ def test_lambda_handler__invalid_nhs_num_AR(mocker):
 
 
 def test_lambda_handler__missing_nhs_num_AR(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(
         _create_lambda_body(msg_missing_nhs_no), _create_dummy_context()
@@ -80,7 +77,7 @@ def test_lambda_handler__missing_nhs_num_AR(mocker):
 
 
 def test_lambda_handler__missing_segment(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(
         _create_lambda_body(msg_missing_segment), _create_dummy_context()
@@ -92,7 +89,7 @@ def test_lambda_handler__missing_segment(mocker):
 
 
 def test_lambda_handler__missing_field(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     resp = lambda_handler(
         _create_lambda_body(msg_missing_field), _create_dummy_context()

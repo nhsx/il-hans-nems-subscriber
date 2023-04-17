@@ -8,16 +8,16 @@ from aws_lambda_powertools import Logger
 from fhir.resources.operationoutcome import OperationOutcome
 from pydantic import HttpUrl
 
-from external_integrations.pds.exceptions import (
+from nems_subscription_create.external_integrations.pds.exceptions import (
     operation_outcome_to_exception,
     PDSUnavailable,
     UnknownPDSError,
 )
-from external_integrations.pds.schemas import (
+from nems_subscription_create.external_integrations.pds.schemas import (
     PatientDetailsResponse,
     AccessTokenResponse,
 )
-from external_integrations.pds.settings import get_pds_settings
+from nems_subscription_create.external_integrations.pds.settings import get_pds_settings
 
 _LOGGER = Logger()
 
