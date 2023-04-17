@@ -3,12 +3,14 @@ from typing import Optional
 import requests
 from aws_lambda_powertools import Logger
 
-from internal_integrations.management_interface.exceptions import (
+from email_care_provider.internal_integrations.management_interface.exceptions import (
     CareProviderLocationNotFound,
     ManagementInterfaceNotAvailable,
 )
-from internal_integrations.management_interface.schemas import CareProviderResponse
-from internal_integrations.management_interface.settings import (
+from email_care_provider.internal_integrations.management_interface.schemas import (
+    CareProviderResponse,
+)
+from email_care_provider.internal_integrations.management_interface.settings import (
     get_management_interface_settings,
 )
 

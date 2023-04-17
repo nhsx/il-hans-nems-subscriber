@@ -4,10 +4,10 @@ from uuid import uuid4
 
 import requests
 import pytest
-from internal_integrations.management_interface.api_client import (
+from email_care_provider.internal_integrations.management_interface.api_client import (
     ManagementInterfaceApiClient,
 )
-from internal_integrations.management_interface.exceptions import (
+from email_care_provider.internal_integrations.management_interface.exceptions import (
     ManagementInterfaceApiClientException,
 )
 

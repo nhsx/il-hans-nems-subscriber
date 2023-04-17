@@ -1,0 +1,16 @@
+[tool.pytest.ini_options]
+pythonpath = "src"
+addopts = [
+    "--import-mode=importlib",
+]
+env = [
+    "PDS_JWT_SUB = very-secret-api-key",
+    "PDS_JWT_ISS = very-secret-api-key",
+    "PDS_API_KEY = very-secret-api-key",
+    "PDS_JWKS_KID = int-1",
+    "PDS_JWT_RSA_PRIVATE_KEY = -----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCIKqd6hjXn9Uz9h8q/PSOg4CPb7h4XIimIjfx5ZaUbl54xehbe\naD5ACSv3aZF2biqKa8ZRntpYpdf2x6Pl7SFRvnQ5NxgOBpYXatdGrOn9rsBo9WwW\n2zSeIQ0WNA8TkJZ+nToPQfewHd5Nj0Dr+o8qj/AiM21IAK4UZIediFDQjwIDAQAB\nAoGAQiCM0xjohux+5kUS9kqnydHwODdsj4l8qB9kNERjqYG5RofnIT14tbp+ipnP\nFbesmyp51luR6CkqN2N+ugOuAQFSohGYLODVZ8fEtXg6AO4rPcVfDcEY2PSjTv66\nJZRHRFIA4iw+Gp7MWiOFVn2qQC6EIV5njf7f9WVBIGRIrvECQQDQRKfFCRR9OQdL\nuWnsYdTSh0sxM7kFIctc62zqQgScEFD6K6tS0Q0qkrUtaxpwuasvvphwuxVtWUKq\nFD4Dtkk5AkEAp1+2msfbxo5bR0o4YD1QT+lC03CbB6QEDX52QIilZ7dTwsk/RV3n\nh6hYXXa6dB5fbczyfY4OEhrlXFqR4gtQBwJBALbXj3KsRhCpwH36icO9H9q0bI8F\nmamnwaISDcybqPBaYr0/GWnbnnOB2Q3Gua+9UUzZR3uww178vkoS+17G6gECQQCU\n/wKKlSIThsTBGNRI8CwfhzJjEZog2iR1cr+IQVylkLCy9P4rHSYwQG+xfDENj8A5\n+blgheYGvgSyCzpUtOdfAkBAK2BkT6gBPPHeeXKwtpMs7jwOWHkYuUAV0KNbc8YT\nckuRlS3FbYXELGvBt/MJ3oo6IYa8EYN0rWnUTl7hezTq\n-----END RSA PRIVATE KEY-----",
+    "PDS_JWT_AUD = https://int.api.service.nhs.uk/oauth2/token",
+    "PDS_BASE_URL = https://int.api.service.nhs.uk",
+    "NOTIFY_API_KEY = very-secret-api-key"
+]
+

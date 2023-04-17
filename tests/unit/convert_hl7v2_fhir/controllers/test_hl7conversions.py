@@ -1,6 +1,9 @@
 import pytest
 
-from controllers.hl7conversions import to_fhir_date, to_fhir_datetime
+from convert_hl7v2_fhir.controllers.hl7conversions import (
+    to_fhir_date,
+    to_fhir_datetime,
+)
 
 
 @pytest.mark.parametrize(
@@ -11,7 +14,7 @@ def test_to_fhir_date__valid_DTM_converts_OK(input, expected):
 
 
 def test_to_fhir_datetime__invalid_DTM_raises_value_error():
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         to_fhir_datetime("20230302")
 
 

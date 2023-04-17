@@ -3,8 +3,10 @@ from typing import Optional
 
 from notifications_python_client.notifications import NotificationsAPIClient
 
-from external_integrations.notify.settings import get_notify_settings
-from internal_integrations.management_interface.api_client import (
+from email_care_provider.external_integrations.notify.settings import (
+    get_notify_settings,
+)
+from email_care_provider.internal_integrations.management_interface.api_client import (
     ManagementInterfaceApiClient,
 )
 from hashlib import scrypt
