@@ -1,4 +1,4 @@
-from typing import Optional
+from datetime import datetime
 
 # note - this is pilot partner specific
 #  so will need implementing with our pilot
@@ -61,36 +61,26 @@ ENCOUNTER_CLASS_MAP = {
 }
 
 
-def to_fhir_date(hl7_DTM: Optional[str]) -> str:
-    if len(hl7_DTM) > 8:
-        hl7_DTM = hl7_DTM[:8]
-
-    return hl7_DTM[0:4] + "-" + hl7_DTM[4:6] + "-" + hl7_DTM[6:8]
+def to_fhir_date(hl7_date: str) -> str:
+    return str(datetime.strptime(hl7_date[:8], "%Y%m%d").date())
 
 
-def to_fhir_datetime(hl7_DTM: str) -> str:
-    if len(hl7_DTM) != 14:
+def to_fhir_datetime(hl7_datetime: str) -> str:
+    if len(hl7_datetime) != 14:
         raise ValueError(
-            "Expected HL7v2 DTM (with time) of length 14 but recieved length "
-            + str(len(hl7_DTM))
+            "Expected HL7v2 DTM (with time) of length 14 but received length "
+            + str(len(hl7_datetime))
             + " instead"
         )
 
-    return (
-        to_fhir_date(hl7_DTM)
-        + "T"
-        + hl7_DTM[8:10]
-        + ":"
-        + hl7_DTM[10:12]
-        + ":"
-        + hl7_DTM[12:14]
-        + "Z"
+    return datetime.strptime(hl7_datetime, "%Y%m%d%H%M%S").strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
     )
 
 
-def to_fhir_admission_method(hl7_CWE: str) -> str:
-    return ADMISSION_METHOD_MAP[hl7_CWE]
+def to_fhir_admission_method(hl7_cwe: str) -> str:
+    return ADMISSION_METHOD_MAP[hl7_cwe]
 
 
-def to_fhir_encounter_class(hl7_CWE: str) -> str:
-    return ENCOUNTER_CLASS_MAP[hl7_CWE]
+def to_fhir_encounter_class(hl7_cwe: str) -> str:
+    return ENCOUNTER_CLASS_MAP[hl7_cwe]
