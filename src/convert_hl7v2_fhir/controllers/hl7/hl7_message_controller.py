@@ -5,19 +5,19 @@ from uuid import uuid4, UUID
 from fhir.resources.bundle import Bundle
 from hl7 import Message
 
-from controllers.hl7.exceptions import (
+from convert_hl7v2_fhir.controllers.hl7.exceptions import (
     MissingSegmentError,
     MissingFieldOrComponentError,
     MissingNHSNumberError,
     InvalidNHSNumberError,
 )
-from controllers.hl7.hl7_conversions import (
+from convert_hl7v2_fhir.controllers.hl7.hl7_conversions import (
     to_fhir_date,
     to_fhir_datetime,
     to_fhir_admission_method,
     to_fhir_encounter_class,
 )
-from controllers.utils import is_nhs_number_valid
+from convert_hl7v2_fhir.controllers.utils import is_nhs_number_valid
 
 
 class HL7MessageController:

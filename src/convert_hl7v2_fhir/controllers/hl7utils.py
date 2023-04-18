@@ -2,7 +2,7 @@ from typing import Optional
 
 from hl7 import Message
 
-from convert_hl7v2_fhir.controllers.exceptions import (
+from convert_hl7v2_fhir.controllers.hl7.exceptions import (
     MissingNHSNumberError,
     InvalidNHSNumberError,
     MissingFieldOrComponentError,

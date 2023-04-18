@@ -1,4 +1,6 @@
-from hl7 import parse
+from typing import Dict
+
+import hl7
 from convert_hl7v2_fhir import app
 from convert_hl7v2_fhir.app import lambda_handler
 
@@ -27,7 +29,6 @@ def _create_lambda_body(v2msg: str) -> dict:
 def test_lambda_handler__ACK_message_in_body(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    _send_to_sqs_mocked = mocker.patch("app._send_to_sqs")
     event = _create_lambda_body(RAW_HL7_MESSAGE_GOOD)
 
     # when
@@ -42,8 +43,10 @@ def test_lambda_handler__ACK_message_in_body(mocker):
 def test_lambda_handler__ACK_correct_recipient(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    resp = lambda_handler(_create_lambda_body(msg_known_good), _create_dummy_context())
-    msg = parse(resp["body"])
+    resp = lambda_handler(
+        _create_lambda_body(RAW_HL7_MESSAGE_GOOD), _DUMMY_LAMBDA_CONTEXT
+    )
+    msg = hl7.parse(resp["body"])
     # test
     assert msg["MSH"][0][5][0] == "SIMHOSP"
     assert msg["MSH"][0][6][0] == "SFAC"
@@ -52,8 +55,10 @@ def test_lambda_handler__ACK_correct_recipient(mocker):
 def test_lambda_handler__good_message_AA(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    resp = lambda_handler(_create_lambda_body(msg_known_good), _create_dummy_context())
-    msg = parse(resp["body"])
+    resp = lambda_handler(
+        _create_lambda_body(RAW_HL7_MESSAGE_GOOD), _DUMMY_LAMBDA_CONTEXT
+    )
+    msg = hl7.parse(resp["body"])
     # test
     assert msg["MSA"][0][1][0] == "AA"
 
@@ -61,8 +66,8 @@ def test_lambda_handler__good_message_AA(mocker):
 def test_lambda_handler__invalid_nhs_num_AR(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    resp = lambda_handler(
-        _create_lambda_body(msg_invalid_nhs_no), _create_dummy_context()
+    response = lambda_handler(
+        _create_lambda_body(RAW_HL7_MESSAGE_INVALID_NHS_NUMBER), _DUMMY_LAMBDA_CONTEXT
     )
     message = hl7.parse(response["body"])
 
@@ -85,7 +90,7 @@ def test_lambda_handler__missing_nhs_num_AR(mocker):
 
 
 def test_lambda_handler__correct_accept_code_for_missing_nhs_number(mocker):
-    mocker.patch("app._send_to_sqs")
+    mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
     response = lambda_handler(
         _create_lambda_body(RAW_HL7_MESSAGE_MISSING_NHS_NUMBER), _DUMMY_LAMBDA_CONTEXT
@@ -100,7 +105,6 @@ def test_lambda_handler__correct_accept_code_for_missing_nhs_number(mocker):
 def test_lambda_handler__missing_segment(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    mocker.patch("app._send_to_sqs")
     event = _create_lambda_body(RAW_HL7_MESSAGE_MISSING_SEGMENT)
 
     # when
@@ -115,7 +119,6 @@ def test_lambda_handler__missing_segment(mocker):
 def test_lambda_handler__missing_field(mocker):
     mocker.patch.object(app, app._send_to_sqs.__name__)
     # given
-    mocker.patch("app._send_to_sqs")
     event = _create_lambda_body(RAW_HL7_MESSAGE_MISSING_FIELD)
 
     # when

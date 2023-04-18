@@ -4,7 +4,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from uuid import uuid4
 
 from convert_hl7v2_fhir.controllers.hl7utils import get_nhs_number, get_str
-from convert_hl7v2_fhir.controllers.hl7conversions import (
+from convert_hl7v2_fhir.controllers.hl7.hl7_conversions import (
     to_fhir_date,
     to_fhir_datetime,
     to_fhir_admission_method,
