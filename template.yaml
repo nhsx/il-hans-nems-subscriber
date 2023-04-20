@@ -17,7 +17,7 @@ Parameters:
     Default: "https://int.api.service.nhs.uk"
   managementInterfaceBaseUrl:
     Type: String
-    Default: "https://staging.hans.service.thepsc.co.uk/"
+    Default: "http://api-django-staging.internal.hans.service.thepsc.co.uk"
   domainName:
     Type: String
     Default: "api-staging.hans.service.thepsc.co.uk"
@@ -27,6 +27,18 @@ Parameters:
   secretName:
     Type: String
     Default: "nhs-hans-staging"
+  securityGroupId:
+    Type: String
+    Default: "sg-0a1f072bf57882eec"
+  subnetId1:
+    Type: AWS::EC2::Subnet::Id
+    Default: "subnet-00b2025c6abdc2a2d"
+  subnetId2:
+    Type: AWS::EC2::Subnet::Id
+    Default: "subnet-0a9dbc18bb14863c2"
+  subnetId3:
+    Type: AWS::EC2::Subnet::Id
+    Default: "subnet-01deb857ec37e96a4"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -146,6 +158,13 @@ Resources:
             - - "{{resolve:secretsmanager:"
               - !Ref secretName
               - ":SecretString:NOTIFY_API_KEY}}"
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref securityGroupId
+        SubnetIds:
+          - !Ref subnetId1
+          - !Ref subnetId2
+          - !Ref subnetId3
   DeadLetterQueue:
     Type: AWS::SQS::Queue
   ConvertHL7v2ToFhirFunction:
