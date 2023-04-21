@@ -1,8 +1,10 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from controllers.notify_care_provider import NotifyCareProviderController
-from schemas import HANSBundle
+from email_care_provider.controllers.notify_care_provider import (
+    NotifyCareProviderController,
+)
+from email_care_provider.schemas import HANSBundle
 
 _LOGGER = Logger()
 
