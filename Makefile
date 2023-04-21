@@ -1,5 +1,4 @@
-REQFILES = ./requirements-dev.txt \
-	tests/requirements.txt \
+REQFILES = tests/requirements.txt \
 	src/nems_subscription_delete/requirements.txt \
 	src/convert_hl7v2_fhir/requirements.txt \
 	src/nems_subscription_create/requirements.txt \
@@ -8,7 +7,10 @@ REQFILES = ./requirements-dev.txt \
 venv/bin/activate:
 	python -m venv venv
 
-venv/deps_installed: venv/bin/activate ${REQFILES}
+.PHONY: venv
+venv: venv/bin/activate
+
+venv/deps_installed: ${REQFILES}
 	for file in ${REQFILES}; do \
 	  python -m pip install -r $$file; \
 	done
