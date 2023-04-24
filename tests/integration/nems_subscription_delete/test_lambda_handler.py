@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from src.nems_subscription_delete.app import lambda_handler
+from nems_subscription_delete.app import lambda_handler
 
 
 @pytest.mark.parametrize(

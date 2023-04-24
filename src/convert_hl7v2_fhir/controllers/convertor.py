@@ -3,8 +3,8 @@ from hl7 import Message
 from jinja2 import Environment, PackageLoader, select_autoescape
 from uuid import uuid4
 
-from controllers.hl7utils import get_nhs_number, get_str
-from controllers.hl7conversions import (
+from convert_hl7v2_fhir.controllers.hl7utils import get_nhs_number, get_str
+from convert_hl7v2_fhir.controllers.hl7conversions import (
     to_fhir_date,
     to_fhir_datetime,
     to_fhir_admission_method,
@@ -15,7 +15,7 @@ from controllers.hl7conversions import (
 class HL7v2ConversionController:
     def convert(self, v2msg_parsed: Message) -> Bundle:
         env = Environment(
-            loader=PackageLoader("controllers.templates", ""),
+            loader=PackageLoader("convert_hl7v2_fhir.controllers.templates", ""),
             autoescape=select_autoescape(["json"]),
         )
 
