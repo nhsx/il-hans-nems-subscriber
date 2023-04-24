@@ -1,6 +1,6 @@
-from enum import Enum
 from datetime import datetime
-from typing import Optional, Literal
+from enum import Enum
+from typing import Optional
 from uuid import uuid4
 
 

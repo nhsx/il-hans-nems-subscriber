@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from unittest.mock import MagicMock
 
-from src.email_care_provider.controllers.notify_care_provider import (
+from email_care_provider.controllers.notify_care_provider import (
     NotifyCareProviderController,
 )
 

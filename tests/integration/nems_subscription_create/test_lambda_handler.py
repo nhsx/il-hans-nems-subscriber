@@ -4,17 +4,16 @@ from uuid import UUID
 
 import pytest
 from pytest_mock import MockFixture
-import jwt
-from src.nems_subscription_create.app import lambda_handler
+from nems_subscription_create.app import lambda_handler
 
-BROKEN_PATIENTS_TEST_DATA_PATH = "./_inputs/broken-patients/"
-VALID_PATIENTS_TEST_DATA_PATH = "./_inputs/valid-patients/"
+BROKEN_PATIENTS_TEST_DATA_PATH = "tests/_inputs/broken-patients/"
+VALID_PATIENTS_TEST_DATA_PATH = "tests/_inputs/valid-patients/"
 
 
 @pytest.fixture(autouse=True)
 def _patch_jwt_encode(mocker: MockFixture):
     """This function is expensive, so let's mock it."""
-    mocker.patch.object(jwt, jwt.encode.__name__, MagicMock(return_value="jwt"))
+    # mocker.patch.object(jwt, jwt.encode.__name__, MagicMock(return_value="jwt"))
 
 
 @pytest.mark.parametrize(

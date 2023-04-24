@@ -4,15 +4,19 @@ from boto3 import client
 from botocore.exceptions import ClientError, NoRegionError
 import hl7
 
-from controllers.hl7builder import generate_ACK_message, v2ErrorCode, v2ErrorSeverity
-from controllers.convertor import HL7v2ConversionController
-from controllers.exceptions import (
+from convert_hl7v2_fhir.controllers.hl7builder import (
+    generate_ACK_message,
+    v2ErrorCode,
+    v2ErrorSeverity,
+)
+from convert_hl7v2_fhir.controllers.convertor import HL7v2ConversionController
+from convert_hl7v2_fhir.controllers.exceptions import (
     InvalidNHSNumberError,
     MissingNHSNumberError,
     MissingFieldOrComponentError,
     MissingSegmentError,
 )
-from internal_integrations.sqs.settings import SQSSettings
+from convert_hl7v2_fhir.internal_integrations.sqs.settings import SQSSettings
 
 _LOGGER = Logger()
 
@@ -75,7 +79,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         #  return an ERR response over HL7v2 for all cases
         #  otherwise hospital system will not know we have had
         #  an internal server error - we will log as error though
-        _LOGGER.error(ex)
+        _LOGGER.exception(ex)
         ack = _create_nak(
             msg_parsed,
             v2ErrorCode.APPLICATION_INTERNAL_ERROR,

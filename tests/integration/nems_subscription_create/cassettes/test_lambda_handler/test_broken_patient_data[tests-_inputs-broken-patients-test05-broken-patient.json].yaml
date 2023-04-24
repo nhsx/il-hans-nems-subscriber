@@ -1,0 +1,78 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer 0o5knWYsS1cuPe07snDUfJ9VbbqA
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - 99cffa9c-6572-4ee7-9d08-a360e64479fb
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002483
+  response:
+    body:
+      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
+        \                   \"extension\": [\n                        {\n                            \"url\":
+        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
+        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
+        \                           }\n                        },\n                        {\n
+        \                           \"url\": \"value\",\n                            \"valueString\":
+        \"6291903\"\n                        }\n                    ],\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
+        \               }\n            ],\n            \"id\": \"oWvXW\",\n            \"line\":
+        [\n                \"23 WINDSOR CRESCENT\",\n                \"SCUNTHORPE\",\n
+        \               \"S HUMBERSIDE\"\n            ],\n            \"period\":
+        {\n                \"start\": \"2017-10-29\"\n            },\n            \"postalCode\":
+        \"DN17 2RH\",\n            \"use\": \"home\"\n        }\n    ],\n    \"birthDate\":
+        \"2013-01-04\",\n    \"gender\": \"female\",\n    \"generalPractitioner\":
+        [\n        {\n            \"id\": \"HCmmO\",\n            \"identifier\":
+        {\n                \"period\": {\n                    \"start\": \"2021-07-17\"\n
+        \               },\n                \"system\": \"https://fhir.nhs.uk/Id/ods-organization-code\",\n
+        \               \"value\": \"A20047\"\n            },\n            \"type\":
+        \"Organization\"\n        }\n    ],\n    \"id\": \"9728002483\",\n    \"identifier\":
+        [\n        {\n            \"extension\": [\n                {\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
+        \                   \"valueCodeableConcept\": {\n                        \"coding\":
+        [\n                            {\n                                \"code\":
+        \"01\",\n                                \"display\": \"Number present and
+        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
+        \                               \"version\": \"1.0.0\"\n                            }\n
+        \                       ]\n                    }\n                }\n            ],\n
+        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
+        \"9728002483\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
+        [\n            {\n                \"code\": \"U\",\n                \"display\":
+        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
+        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
+        [\n        {\n            \"family\": \"KIRBY\",\n            \"given\": [\n
+        \               \"Carrie\",\n                \"Elsa\"\n            ],\n            \"id\":
+        \"UsWPZ\",\n            \"period\": {\n                \"start\": \"2016-12-12\"\n
+        \           },\n            \"prefix\": [\n                \"MISS\"\n            ],\n
+        \           \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\": \"Patient\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2953'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Mon, 17 Apr 2023 22:36:23 GMT
+      Etag:
+      - W/"1"
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - 99cffa9c-6572-4ee7-9d08-a360e64479fb
+    status:
+      code: 200
+      message: OK
+version: 1
