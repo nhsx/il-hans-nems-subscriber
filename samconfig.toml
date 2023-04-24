@@ -8,5 +8,5 @@ s3_prefix = "nhs-hans-staging"
 region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "pdsJwtAud=\"https://int.api.service.nhs.uk/oauth2/token\" pdsJwtKid=\"int-2\" pdsBaseUrl=\"https://int.api.service.nhs.uk\" managementInterfaceBaseUrl=\"https://staging.hans.service.thepsc.co.uk/\" domainName=\"api-staging.hans.service.thepsc.co.uk\" hostedZoneId=\"Z0749399NWCFPUQORL8R\" secretName=\"nhs-hans-staging\""
+parameter_overrides = "pdsJwtAud=\"https://int.api.service.nhs.uk/oauth2/token\" pdsJwtKid=\"int-2\" pdsBaseUrl=\"https://int.api.service.nhs.uk\" managementInterfaceBaseUrl=\"http://api-django-staging.internal.hans.service.thepsc.co.uk\" domainName=\"api-staging.hans.service.thepsc.co.uk\" hostedZoneId=\"Z0749399NWCFPUQORL8R\" secretName=\"nhs-hans-staging\" securityGroupId=\"sg-0a1f072bf57882eec\" subnetId1=\"subnet-00b2025c6abdc2a2d\" subnetId2=\"subnet-0a9dbc18bb14863c2\" subnetId3=\"subnet-01deb857ec37e96a4\""
 image_repositories = []
