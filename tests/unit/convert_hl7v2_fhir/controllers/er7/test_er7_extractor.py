@@ -40,6 +40,7 @@ def test_er7_extractor__good_message():
     assert toa.month == 5
     assert toa.day == 8
     assert toa.hour == 13
+    assert toa.tzinfo is not None
 
 
 def test_er7_extractor__invalid_nhs_number():
