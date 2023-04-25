@@ -74,4 +74,79 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer UEdVWy6gUn6Yur0KG1M6EDGGK1ac
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - 134b1a6f-4090-47dc-8b12-e9617bfffb47
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002548
+  response:
+    body:
+      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
+        \                   \"extension\": [\n                        {\n                            \"url\":
+        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
+        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
+        \                           }\n                        },\n                        {\n
+        \                           \"url\": \"value\",\n                            \"valueString\":
+        \"6308958\"\n                        }\n                    ],\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
+        \               }\n            ],\n            \"id\": \"XtjCT\",\n            \"line\":
+        [\n                \"10 BURGESS ROAD\",\n                \"BRIGG\",\n                \"S
+        HUMBERSIDE\"\n            ],\n            \"period\": {\n                \"start\":
+        \"2011-07-26\"\n            },\n            \"postalCode\": \"DN20 8DA\",\n
+        \           \"use\": \"home\"\n        }\n    ],\n    \"birthDate\": \"2011-05-04\",\n
+        \   \"gender\": \"female\",\n    \"generalPractitioner\": [\n        {\n            \"id\":
+        \"erGDz\",\n            \"identifier\": {\n                \"period\": {\n
+        \                   \"start\": \"2021-02-15\"\n                },\n                \"system\":
+        \"https://fhir.nhs.uk/Id/ods-organization-code\",\n                \"value\":
+        \"A20047\"\n            },\n            \"type\": \"Organization\"\n        }\n
+        \   ],\n    \"id\": \"9728002548\",\n    \"identifier\": [\n        {\n            \"extension\":
+        [\n                {\n                    \"url\": \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
+        \                   \"valueCodeableConcept\": {\n                        \"coding\":
+        [\n                            {\n                                \"code\":
+        \"01\",\n                                \"display\": \"Number present and
+        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
+        \                               \"version\": \"1.0.0\"\n                            }\n
+        \                       ]\n                    }\n                }\n            ],\n
+        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
+        \"9728002548\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
+        [\n            {\n                \"code\": \"U\",\n                \"display\":
+        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
+        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
+        [\n        {\n            \"family\": \"YOUELL\",\n            \"given\":
+        [\n                \"MARLYN\"\n            ],\n            \"id\": \"AKbgB\",\n
+        \           \"period\": {\n                \"start\": \"2018-03-21\"\n            },\n
+        \           \"prefix\": [\n                \"MISS\"\n            ],\n            \"use\":
+        \"usual\"\n        }\n    ],\n    \"resourceType\": \"Patient\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2921'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Tue, 25 Apr 2023 14:24:08 GMT
+      Etag:
+      - W/"1"
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - 134b1a6f-4090-47dc-8b12-e9617bfffb47
+    status:
+      code: 200
+      message: OK
 version: 1
