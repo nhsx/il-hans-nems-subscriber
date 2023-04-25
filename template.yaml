@@ -73,8 +73,8 @@ Resources:
   NEMSSubscriptionCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/nems_subscription_create/
-      Handler: app.lambda_handler
+      CodeUri: src/nems_subscription_create
+      Handler: nems_subscription_create.app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that creates a NEMS subscription for a given CareRecipient
       Architectures:
@@ -114,8 +114,8 @@ Resources:
   NEMSSubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/nems_subscription_delete/
-      Handler: app.lambda_handler
+      CodeUri: src/nems_subscription_delete
+      Handler: nems_subscription_delete.app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that deletes a NEMS subscription for a given CareRecipient
       Architectures:
@@ -137,7 +137,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/email_care_provider
-      Handler: app.lambda_handler
+      Handler: email_care_provider.app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that processes messages from the queue and sends emails to care providers
       Architectures:
@@ -170,8 +170,8 @@ Resources:
   ConvertHL7v2ToFhirFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/convert_hl7v2_fhir/
-      Handler: app.lambda_handler
+      CodeUri: src/convert_hl7v2_fhir
+      Handler: convert_hl7v2_fhir.app.lambda_handler
       Runtime: python3.9
       Description: Lambda function that converts HL7v2 (over HTTPs) to FHIR
       Architectures:

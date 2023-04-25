@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
-pythonpath = "src"
+pythonpath = "src/nems_subscription_delete src/nems_subscription_create src/email_care_provider src/convert_hl7v2_fhir"
 addopts = [
     "--import-mode=importlib",
 ]
