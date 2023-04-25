@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from convert_hl7v2_fhir.controllers.er7.er7_extractor import ER7Extractor
 from convert_hl7v2_fhir.controllers.er7.exceptions import (
@@ -39,7 +41,7 @@ def test_er7_extractor__good_message():
     assert toa.month == 5
     assert toa.day == 8
     assert toa.hour == 13
-    assert toa.tzinfo is not None
+    assert toa.tzinfo == datetime.timezone.utc
 
 
 def test_er7_extractor__invalid_nhs_number():
