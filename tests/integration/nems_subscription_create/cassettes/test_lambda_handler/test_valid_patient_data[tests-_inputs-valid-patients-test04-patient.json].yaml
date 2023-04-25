@@ -74,4 +74,79 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer UJDPmfkLF4QebAAgVtKszzsuCdwL
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - b86f924e-9c9d-4fb1-897d-111b6c661d62
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002475
+  response:
+    body:
+      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
+        \                   \"extension\": [\n                        {\n                            \"url\":
+        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
+        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
+        \                           }\n                        },\n                        {\n
+        \                           \"url\": \"value\",\n                            \"valueString\":
+        \"22408060\"\n                        }\n                    ],\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
+        \               }\n            ],\n            \"id\": \"eUZvb\",\n            \"line\":
+        [\n                \"CHAD\",\n                \"STATION ROAD\",\n                \"ULCEBY\"\n
+        \           ],\n            \"period\": {\n                \"start\": \"2010-03-24\"\n
+        \           },\n            \"postalCode\": \"DN39 6UQ\",\n            \"use\":
+        \"home\"\n        }\n    ],\n    \"birthDate\": \"2009-06-16\",\n    \"gender\":
+        \"female\",\n    \"generalPractitioner\": [\n        {\n            \"id\":
+        \"NRzTw\",\n            \"identifier\": {\n                \"period\": {\n
+        \                   \"start\": \"2019-05-04\"\n                },\n                \"system\":
+        \"https://fhir.nhs.uk/Id/ods-organization-code\",\n                \"value\":
+        \"A20047\"\n            },\n            \"type\": \"Organization\"\n        }\n
+        \   ],\n    \"id\": \"9728002475\",\n    \"identifier\": [\n        {\n            \"extension\":
+        [\n                {\n                    \"url\": \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
+        \                   \"valueCodeableConcept\": {\n                        \"coding\":
+        [\n                            {\n                                \"code\":
+        \"01\",\n                                \"display\": \"Number present and
+        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
+        \                               \"version\": \"1.0.0\"\n                            }\n
+        \                       ]\n                    }\n                }\n            ],\n
+        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
+        \"9728002475\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
+        [\n            {\n                \"code\": \"U\",\n                \"display\":
+        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
+        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
+        [\n        {\n            \"family\": \"JORIE\",\n            \"given\": [\n
+        \               \"Cassie\",\n                \"Mabel\"\n            ],\n            \"id\":
+        \"GWRUv\",\n            \"period\": {\n                \"start\": \"2009-11-11\"\n
+        \           },\n            \"prefix\": [\n                \"MISS\"\n            ],\n
+        \           \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\": \"Patient\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2936'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Tue, 25 Apr 2023 14:40:55 GMT
+      Etag:
+      - W/"1"
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - b86f924e-9c9d-4fb1-897d-111b6c661d62
+    status:
+      code: 200
+      message: OK
 version: 1

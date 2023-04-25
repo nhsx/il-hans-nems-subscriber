@@ -76,4 +76,81 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer UJDPmfkLF4QebAAgVtKszzsuCdwL
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - a7f4e622-cded-4d28-8601-c8ebd7b53f42
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002351
+  response:
+    body:
+      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
+        \                   \"extension\": [\n                        {\n                            \"url\":
+        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
+        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
+        \                           }\n                        },\n                        {\n
+        \                           \"url\": \"value\",\n                            \"valueString\":
+        \"19974637\"\n                        }\n                    ],\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
+        \               }\n            ],\n            \"id\": \"fwWKj\",\n            \"line\":
+        [\n                \"1 NORTHLANDS ROAD SOUTH\",\n                \"WINTERTON\",\n
+        \               \"SCUNTHORPE\",\n                \"S HUMBERSIDE\"\n            ],\n
+        \           \"period\": {\n                \"start\": \"1980-10-21\"\n            },\n
+        \           \"postalCode\": \"DN15 9PX\",\n            \"use\": \"home\"\n
+        \       }\n    ],\n    \"birthDate\": \"1961-08-28\",\n    \"gender\": \"female\",\n
+        \   \"generalPractitioner\": [\n        {\n            \"id\": \"uFHCe\",\n
+        \           \"identifier\": {\n                \"period\": {\n                    \"start\":
+        \"1982-02-05\"\n                },\n                \"system\": \"https://fhir.nhs.uk/Id/ods-organization-code\",\n
+        \               \"value\": \"A20047\"\n            },\n            \"type\":
+        \"Organization\"\n        }\n    ],\n    \"id\": \"9728002351\",\n    \"identifier\":
+        [\n        {\n            \"extension\": [\n                {\n                    \"url\":
+        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
+        \                   \"valueCodeableConcept\": {\n                        \"coding\":
+        [\n                            {\n                                \"code\":
+        \"01\",\n                                \"display\": \"Number present and
+        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
+        \                               \"version\": \"1.0.0\"\n                            }\n
+        \                       ]\n                    }\n                }\n            ],\n
+        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
+        \"9728002351\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
+        [\n            {\n                \"code\": \"U\",\n                \"display\":
+        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
+        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
+        [\n        {\n            \"family\": \"CANNON\",\n            \"given\":
+        [\n                \"Haley\",\n                \"Joan\"\n            ],\n
+        \           \"id\": \"yZltG\",\n            \"period\": {\n                \"start\":
+        \"1976-06-07\"\n            },\n            \"prefix\": [\n                \"MRS\"\n
+        \           ],\n            \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\":
+        \"Patient\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2986'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Tue, 25 Apr 2023 14:40:57 GMT
+      Etag:
+      - W/"1"
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - a7f4e622-cded-4d28-8601-c8ebd7b53f42
+    status:
+      code: 200
+      message: OK
 version: 1
