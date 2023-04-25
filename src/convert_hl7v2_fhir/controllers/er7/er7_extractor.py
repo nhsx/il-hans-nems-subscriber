@@ -37,16 +37,11 @@ class ER7Extractor:
         if not nhs_numbers:
             raise MissingNHSNumberError
 
-        try:
-            return next(
-                (
-                    nhs_number
-                    for nhs_number in nhs_numbers
-                    if is_nhs_number_valid(nhs_number)
-                )
-            )
-        except StopIteration:
-            raise InvalidNHSNumberError
+        for nhs_number in nhs_numbers:
+            if is_nhs_number_valid(nhs_number):
+                return nhs_number
+
+        raise InvalidNHSNumberError
 
     def family_name(self) -> str:
         _family_name = self.er7_message.pid.patient_name.family_name.value
