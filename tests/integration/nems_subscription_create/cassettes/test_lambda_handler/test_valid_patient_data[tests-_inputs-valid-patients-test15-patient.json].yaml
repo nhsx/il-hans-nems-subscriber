@@ -7,13 +7,13 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer 0o5knWYsS1cuPe07snDUfJ9VbbqA
+      - Bearer ALpf88s4wjVxbgX7W04V5DhFtxah
       Connection:
       - keep-alive
       User-Agent:
       - python-requests/2.28.2
       X-Request-ID:
-      - 5ca65933-e384-4f4c-8fa4-6f212ee5dc2f
+      - c629151c-5247-4c24-a4a0-e4883591170e
     method: GET
     uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002386
   response:
@@ -64,7 +64,7 @@ interactions:
       Content-Type:
       - application/fhir+json
       Date:
-      - Mon, 17 Apr 2023 22:36:12 GMT
+      - Tue, 25 Apr 2023 14:31:46 GMT
       Etag:
       - W/"1"
       Server:
@@ -72,120 +72,7 @@ interactions:
       Strict-Transport-Security:
       - max-age=864000; includeSubDomains
       X-Request-ID:
-      - 5ca65933-e384-4f4c-8fa4-6f212ee5dc2f
-    status:
-      code: 200
-      message: OK
-- request:
-    body: grant_type=client_credentials&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&client_assertion=eyJhbGciOiJSUzUxMiIsImtpZCI6ImludC0yIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ2ZXJ5LXNlY3JldC1hcGkta2V5IiwiaXNzIjoidmVyeS1zZWNyZXQtYXBpLWtleSIsImp0aSI6ImU2YzAxMzdiLWI5OTgtNDRhNy1hNTljLTM1Mzg1YTM2YWEwNSIsImF1ZCI6Imh0dHBzOi8vaW50LmFwaS5zZXJ2aWNlLm5ocy51ay9vYXV0aDIvdG9rZW4iLCJleHAiOjE2ODI0MzI3OTh9.faRQzPGivgwrY_K0UxbGBWadajIQWJX5QyIu_OdaLlUeikPOwxtxDfrbU9kJGG3M8FuP-EllAlfHFC-iuWJNVwfm0fhBq2w_sEvYnS5SBELUn06ZPX3DNUa5kyuxo6eanvNkgYI2HH5FWZxDHTerHYIO-s58cLXbO0snfaLak71P_qDKm3ncQQ8CpX1BesTT_kf7-lNAFo-pfG0mxCZCg9wSrWv2VPLvpD5ubplLng3QGwfaTk7qQBADgU0THwdCshTqQIX5Su2svZKWPfviuEJo3XTU9qb922lz6gXBr1EDGZGyVBsu8XOXjnPXePhEsQSV0OMHHg1VP047ZOSBQviP4k0l2AIXQLvTgAZgcIEah6DC6dJFSkYrik5rxaX4QKGV1yV5ow1LRIXaK5vYUEXYOxBRXiKGFcLB5g_Cs46Tz1asRViU1pj36N4aaQWpC5XBIwZmfKDnpoyIgyEjEdhFPIU1-Cd1HUWUPTXAw7iQnPVylcbuLGZ6GZDo3qMItA1QmJY7XxoJxzz-l9fX2FqNuM8_oz5OzNdRYHh_pFc4hQAWGw0qqtfg-DVeD4jAkDOoyBnKcODuVAFFzr6xolKhVMGopsuVEZHxmD8oJY4o8S0QoxeWIfGieoDGeykVd2qAP71NYW6sERivd9i3KCdDqUlE0E7qDWPSU3oU4nw
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1102'
-      User-Agent:
-      - python-requests/2.28.2
-      content-type:
-      - application/x-www-form-urlencoded
-    method: POST
-    uri: https://int.api.service.nhs.uk/oauth2/token
-  response:
-    body:
-      string: "\n      {\n        \"error\": \"invalid_request\",\n        \"error_description\":
-        \"Invalid 'iss'/'sub' claims in client_assertion JWT\",\n        \"message_id\":
-        \"rrt-3484542201997436548-b-geu2-24116-443151-1\"\n      }\n"
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '206'
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 25 Apr 2023 14:21:38 GMT
-      Strict-Transport-Security:
-      - max-age=864000; includeSubDomains
-    status:
-      code: 401
-      message: Unauthorized
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Authorization:
-      - Bearer UEdVWy6gUn6Yur0KG1M6EDGGK1ac
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.28.2
-      X-Request-ID:
-      - 1b1eea4f-7a52-4608-9c04-688b6d8bfd3e
-    method: GET
-    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002386
-  response:
-    body:
-      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
-        \                   \"extension\": [\n                        {\n                            \"url\":
-        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
-        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
-        \                           }\n                        },\n                        {\n
-        \                           \"url\": \"value\",\n                            \"valueString\":
-        \"6271121\"\n                        }\n                    ],\n                    \"url\":
-        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
-        \               }\n            ],\n            \"id\": \"EOSXw\",\n            \"line\":
-        [\n                \"24 DAVY AVENUE\",\n                \"SCUNTHORPE\",\n
-        \               \"S HUMBERSIDE\"\n            ],\n            \"period\":
-        {\n                \"start\": \"1979-06-19\"\n            },\n            \"postalCode\":
-        \"DN15 8EZ\",\n            \"use\": \"home\"\n        }\n    ],\n    \"birthDate\":
-        \"1959-03-28\",\n    \"gender\": \"unknown\",\n    \"generalPractitioner\":
-        [\n        {\n            \"id\": \"mIcpf\",\n            \"identifier\":
-        {\n                \"period\": {\n                    \"start\": \"1988-09-18\"\n
-        \               },\n                \"system\": \"https://fhir.nhs.uk/Id/ods-organization-code\",\n
-        \               \"value\": \"A20047\"\n            },\n            \"type\":
-        \"Organization\"\n        }\n    ],\n    \"id\": \"9728002386\",\n    \"identifier\":
-        [\n        {\n            \"extension\": [\n                {\n                    \"url\":
-        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
-        \                   \"valueCodeableConcept\": {\n                        \"coding\":
-        [\n                            {\n                                \"code\":
-        \"01\",\n                                \"display\": \"Number present and
-        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
-        \                               \"version\": \"1.0.0\"\n                            }\n
-        \                       ]\n                    }\n                }\n            ],\n
-        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
-        \"9728002386\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
-        [\n            {\n                \"code\": \"U\",\n                \"display\":
-        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
-        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
-        [\n        {\n            \"family\": \"SENGUPTA\",\n            \"given\":
-        [\n                \"SUKHSHARAN\",\n                \"KAUR\"\n            ],\n
-        \           \"id\": \"WenEV\",\n            \"period\": {\n                \"start\":
-        \"2017-02-18\"\n            },\n            \"prefix\": [\n                \"MRS\"\n
-        \           ],\n            \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\":
-        \"Patient\"\n}"
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '2955'
-      Content-Type:
-      - application/fhir+json
-      Date:
-      - Tue, 25 Apr 2023 14:24:02 GMT
-      Etag:
-      - W/"1"
-      Server:
-      - XXXXXX
-      Strict-Transport-Security:
-      - max-age=864000; includeSubDomains
-      X-Request-ID:
-      - 1b1eea4f-7a52-4608-9c04-688b6d8bfd3e
+      - c629151c-5247-4c24-a4a0-e4883591170e
     status:
       code: 200
       message: OK

@@ -7,13 +7,13 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer 0o5knWYsS1cuPe07snDUfJ9VbbqA
+      - Bearer ALpf88s4wjVxbgX7W04V5DhFtxah
       Connection:
       - keep-alive
       User-Agent:
       - python-requests/2.28.2
       X-Request-ID:
-      - 4fd3ca11-226d-4351-90e3-37dbd5bd0306
+      - cfe2dad3-dee5-43b5-b4de-088029e2303f
     method: GET
     uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002440
   response:
@@ -62,7 +62,7 @@ interactions:
       Content-Type:
       - application/fhir+json
       Date:
-      - Mon, 17 Apr 2023 22:36:14 GMT
+      - Tue, 25 Apr 2023 14:31:48 GMT
       Etag:
       - W/"1"
       Server:
@@ -70,82 +70,7 @@ interactions:
       Strict-Transport-Security:
       - max-age=864000; includeSubDomains
       X-Request-ID:
-      - 4fd3ca11-226d-4351-90e3-37dbd5bd0306
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Authorization:
-      - Bearer UEdVWy6gUn6Yur0KG1M6EDGGK1ac
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.28.2
-      X-Request-ID:
-      - aec2976b-379b-48c6-8f5a-228f30d41a9f
-    method: GET
-    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9728002440
-  response:
-    body:
-      string: "{\n    \"address\": [\n        {\n            \"extension\": [\n                {\n
-        \                   \"extension\": [\n                        {\n                            \"url\":
-        \"type\",\n                            \"valueCoding\": {\n                                \"code\":
-        \"PAF\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType\"\n
-        \                           }\n                        },\n                        {\n
-        \                           \"url\": \"value\",\n                            \"valueString\":
-        \"32144717\"\n                        }\n                    ],\n                    \"url\":
-        \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey\"\n
-        \               }\n            ],\n            \"id\": \"ZtQOi\",\n            \"line\":
-        [\n                \"17 BRAMLEY CLOSE\",\n                \"BARTON-UPON-HUMBER\"\n
-        \           ],\n            \"period\": {\n                \"start\": \"2019-12-07\"\n
-        \           },\n            \"postalCode\": \"DN18 5GA\",\n            \"use\":
-        \"home\"\n        }\n    ],\n    \"birthDate\": \"2012-07-19\",\n    \"gender\":
-        \"female\",\n    \"generalPractitioner\": [\n        {\n            \"id\":
-        \"QAJvu\",\n            \"identifier\": {\n                \"period\": {\n
-        \                   \"start\": \"2017-09-29\"\n                },\n                \"system\":
-        \"https://fhir.nhs.uk/Id/ods-organization-code\",\n                \"value\":
-        \"A20047\"\n            },\n            \"type\": \"Organization\"\n        }\n
-        \   ],\n    \"id\": \"9728002440\",\n    \"identifier\": [\n        {\n            \"extension\":
-        [\n                {\n                    \"url\": \"https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus\",\n
-        \                   \"valueCodeableConcept\": {\n                        \"coding\":
-        [\n                            {\n                                \"code\":
-        \"01\",\n                                \"display\": \"Number present and
-        verified\",\n                                \"system\": \"https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus\",\n
-        \                               \"version\": \"1.0.0\"\n                            }\n
-        \                       ]\n                    }\n                }\n            ],\n
-        \           \"system\": \"https://fhir.nhs.uk/Id/nhs-number\",\n            \"value\":
-        \"9728002440\"\n        }\n    ],\n    \"meta\": {\n        \"security\":
-        [\n            {\n                \"code\": \"U\",\n                \"display\":
-        \"unrestricted\",\n                \"system\": \"http://terminology.hl7.org/CodeSystem/v3-Confidentiality\"\n
-        \           }\n        ],\n        \"versionId\": \"1\"\n    },\n    \"name\":
-        [\n        {\n            \"family\": \"SIMON\",\n            \"given\": [\n
-        \               \"ORPAH\",\n                \"CARMEL\"\n            ],\n            \"id\":
-        \"Dnclr\",\n            \"period\": {\n                \"start\": \"2020-06-29\"\n
-        \           },\n            \"prefix\": [\n                \"MISS\"\n            ],\n
-        \           \"use\": \"usual\"\n        }\n    ],\n    \"resourceType\": \"Patient\"\n}"
-    headers:
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '2928'
-      Content-Type:
-      - application/fhir+json
-      Date:
-      - Tue, 25 Apr 2023 14:24:03 GMT
-      Etag:
-      - W/"1"
-      Server:
-      - XXXXXX
-      Strict-Transport-Security:
-      - max-age=864000; includeSubDomains
-      X-Request-ID:
-      - aec2976b-379b-48c6-8f5a-228f30d41a9f
+      - cfe2dad3-dee5-43b5-b4de-088029e2303f
     status:
       code: 200
       message: OK
