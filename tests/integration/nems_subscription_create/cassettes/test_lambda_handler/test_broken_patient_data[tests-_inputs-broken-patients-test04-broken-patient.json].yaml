@@ -7,13 +7,13 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer 0o5knWYsS1cuPe07snDUfJ9VbbqA
+      - Bearer ALpf88s4wjVxbgX7W04V5DhFtxah
       Connection:
       - keep-alive
       User-Agent:
       - python-requests/2.28.2
       X-Request-ID:
-      - 156f7146-e6cd-4a26-a8d1-bd27de69b3d4
+      - bea8656f-11cb-4f1e-bc05-700592a02ca1
     method: GET
     uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/0008002475
   response:
@@ -33,13 +33,57 @@ interactions:
       Content-Type:
       - application/fhir+json
       Date:
-      - Mon, 17 Apr 2023 22:36:23 GMT
+      - Tue, 25 Apr 2023 14:31:56 GMT
       Server:
       - XXXXXX
       Strict-Transport-Security:
       - max-age=864000; includeSubDomains
       X-Request-ID:
-      - 156f7146-e6cd-4a26-a8d1-bd27de69b3d4
+      - bea8656f-11cb-4f1e-bc05-700592a02ca1
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer UJDPmfkLF4QebAAgVtKszzsuCdwL
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+      X-Request-ID:
+      - ec0d4b6d-ffb8-4b2f-b141-0f35e3aeac40
+    method: GET
+    uri: https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/0008002475
+  response:
+    body:
+      string: "{\n    \"issue\": [\n        {\n            \"code\": \"value\",\n
+        \           \"details\": {\n                \"coding\": [\n                    {\n
+        \                       \"code\": \"INVALID_RESOURCE_ID\",\n                        \"display\":
+        \"Resource Id is invalid\",\n                        \"system\": \"https://fhir.nhs.uk/R4/CodeSystem/Spine-ErrorOrWarningCode\",\n
+        \                       \"version\": \"1\"\n                    }\n                ]\n
+        \           },\n            \"severity\": \"error\"\n        }\n    ],\n    \"resourceType\":
+        \"OperationOutcome\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '526'
+      Content-Type:
+      - application/fhir+json
+      Date:
+      - Tue, 25 Apr 2023 14:41:00 GMT
+      Server:
+      - XXXXXX
+      Strict-Transport-Security:
+      - max-age=864000; includeSubDomains
+      X-Request-ID:
+      - ec0d4b6d-ffb8-4b2f-b141-0f35e3aeac40
     status:
       code: 400
       message: Bad Request
