@@ -9,6 +9,6 @@
         "PDS_BASE_URL" : "https://int.api.service.nhs.uk"
     },
     "EmailCareProviderFunction": {
-        "NOTIFY_API_KEY" : "hansstaging-6cfde5cc-72e2-4e66-8bea-c87659099f74-a5c3df98-7760-497d-90d2-306e52561ec4"
+        "NOTIFY_API_KEY" : "GOV.UK Notify API Key"
     }
 }
