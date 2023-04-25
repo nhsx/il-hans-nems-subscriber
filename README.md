@@ -32,6 +32,8 @@ Set up a copy of `envars.json` and add the information from above.
 
 You can run the code locally using `sam local start-api --env-vars envars.json`. This will set up a local endpoint at `127.0.0.1:3000`.
 
+In production, you will need to use production APIs, run the software in an environment that has been CHECK pentration tested and achieve IG and DCB0129 (Clinical Safety) approval.
+
 ## Documentation
 The API is documented in the OpenAPI format [on the tech docs website](https://nhsx.github.io/il-hans-infrastructure/serverless-api/).
 
