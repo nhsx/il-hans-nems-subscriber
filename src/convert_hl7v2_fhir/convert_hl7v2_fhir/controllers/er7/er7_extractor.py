@@ -44,9 +44,18 @@ class ER7Extractor:
         raise InvalidNHSNumberError
 
     def family_name(self) -> str:
+        self.er7_message.pid.patient_name.family_name.validate()
         _family_name = self.er7_message.pid.patient_name.family_name.value
         if not _family_name:
-            raise MissingFamilyNameError()
+            full_element_name = ".".join(
+                (
+                    self.er7_message.pid.patient_name.element_name,
+                    self.er7_message.pid.patient_name.family_name.element_name,
+                )
+            )
+            raise MissingFamilyNameError(
+                f"Required field was missing: {full_element_name}"
+            )
 
         return self.er7_message.pid.patient_name.family_name.value
 

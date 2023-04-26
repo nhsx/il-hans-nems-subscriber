@@ -11,6 +11,7 @@ RAW_HL7_MESSAGE_MISSING_SEGMENT = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|202005081306
 RAW_HL7_MESSAGE_MISSING_FIELD = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20200508130643|||C006^Wolf^Kathy^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1|2590157853^^^SIMULATOR MRN^MRN|2590157853^^^SIMULATOR MRN^MRN~2478684691^^^NHSNBR^NHSNMBR||||19890118000000|F|||170 Juice Place^^London^^RW21 6KC^GBR^HOME||020 5368 1665^HOME|||||||||R^Other - Chinese^^^||||||||\rPD1|||FAMILY PRACTICE^^12345|\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^MainBuilding^5|28b|||C006^Wolf^Kathy^^^Dr^^^DRNBR^PRSNL^^^ORGDR|||MED|||||||||6145914547062969032^^^^visitid||||||||||||||||||||||ARRIVED|||20200508130643||"
 RAW_HL7_MESSAGE_MISSING_HOSPITAL_AND_WARD = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20230411130643|||C006^Buckley^Mark^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1|9728002378^^^NHSNBR^NHSNMBR|9728002378^^^NHSNBR^NHSNMBR||PUCKEY^Miles^Keith^^^^CURRENT||19610608000000|M||||||||||||||||||||||\rPV1|1|I|^MainRoom^Bed 1^^^BED^Main Building^5|28b||||||MED|||||||||||||||||||||||||||||||ARRIVED|||20200508130643||"
 RAW_HL7_MESSAGE_MISSING_ADMISSION_TIME = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20230411130643|||C006^Buckley^Mark^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1|9728002378^^^NHSNBR^NHSNMBR|9728002378^^^NHSNBR^NHSNMBR||PUCKEY^Miles^Keith^^^^CURRENT||19610608000000|M||||||||||||||||||||||\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^Main Building^5|28b||||||MED|||||||||||||||||||||||||||||||ARRIVED|||||"
+RAW_HL7_MESSAGE_MISSING_FAMILY_NAME = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20230411130643|||C006^Buckley^Mark^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1||9728002378^^^NHSNBR^NHSNMBR||^Miles^Keith^^^^CURRENT||19610608000000|M||||||||||||||||||||||\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^Main Building^5|28b||||||MED|||||||||||||||||||||||||||||||ARRIVED|||20200508130643||"
 
 _DUMMY_LAMBDA_CONTEXT = {
     "function_name": "test",
@@ -136,3 +137,19 @@ def test_lambda_handler__missing_admission_time(mocker):
     assert message["ERR"][0][3][0] == str(HL7ErrorCode.REQUIRED_FIELD_MISSING.value)
     assert "Required field was missing" in str(message["ERR"][0])
     assert "PV1_44" in str(message["ERR"][0])
+
+
+def test_lambda_handler__missing_family_name(mocker):
+    # given
+    mocker.patch("convert_hl7v2_fhir.app._send_to_sqs")
+    event = _create_lambda_body(RAW_HL7_MESSAGE_MISSING_FAMILY_NAME)
+
+    # when
+    response = lambda_handler(event, _DUMMY_LAMBDA_CONTEXT)
+    message = hl7.parse(response["body"])
+
+    # then
+    assert message["MSA"][0][1][0] == "AR"
+    assert message["ERR"][0][3][0] == str(HL7ErrorCode.REQUIRED_FIELD_MISSING.value)
+    assert "Required field was missing" in str(message["ERR"][0])
+    assert "PID_5" in str(message["ERR"][0])
