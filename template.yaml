@@ -27,6 +27,12 @@ Parameters:
   secretName:
     Type: String
     Default: "nhs-hans-staging"
+  vpcId:
+    Type: String
+    Default: "vpc-00f6ad64b1666d0c4"
+  vpceId:
+    Type: String
+    Default: "vpce-0e90003d99e557d6f"
   securityGroupId:
     Type: String
     Default: "sg-0a1f072bf57882eec"
@@ -70,6 +76,19 @@ Resources:
         Route53:
           HostedZoneId: !Ref hostedZoneId
       StageName: Prod
+  APIGatewayInternal:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: Domain configure API gateway for internal-only APIs
+      Auth:
+        ResourcePolicy:
+          SourceVpcWhitelist:
+          - !Ref vpcId
+      EndpointConfiguration:
+        Type: PRIVATE
+        VPCEndpointIds:
+          - !Ref vpceId
+      StageName: Prod
   NEMSSubscriptionCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -85,7 +104,7 @@ Resources:
           Properties:
             Path: /subscription
             Method: post
-            RestApiId: !Ref APIGatewayPublic
+            RestApiId: !Ref APIGatewayInternal
       Environment:
         Variables:
           PDS_JWT_RSA_PRIVATE_KEY: !Join
@@ -126,7 +145,7 @@ Resources:
           Properties:
             Path: /subscription/{id}
             Method: delete
-            RestApiId: !Ref APIGatewayPublic
+            RestApiId: !Ref APIGatewayInternal
   UnprocessedMessageQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -202,32 +221,11 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ManageAPI:
-    Description: "API Gateway endpoint URL for Prod stage for Create NEMS Subscription function"
-    Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod/subscription"
-  NEMSSubscriptionCreateFunction:
-    Description: "NEMS Subscription Create Lambda Function ARN"
-    Value: !GetAtt NEMSSubscriptionCreateFunction.Arn
-  NEMSSubscriptionCreateFunctionIamRole:
-    Description: "Implicit IAM Role created for NEMS Subscription Create function"
-    Value: !GetAtt NEMSSubscriptionCreateFunctionRole.Arn
-  NEMSSubscriptionDeleteFunction:
-    Description: "NEMS Subscription Delete Lambda Function ARN"
-    Value: !GetAtt NEMSSubscriptionDeleteFunction.Arn
-  NEMSSubscriptionDeleteFunctionIamRole:
-    Description: "Implicit IAM Role created for NEMS Subscription Delete function"
-    Value: !GetAtt NEMSSubscriptionDeleteFunctionRole.Arn
-  MESHCheckMailboxFunction:
-    Description: "MESH Check Mailbox Lambda Function ARN"
-    Value: !GetAtt EmailCareProviderFunction.Arn
-  MESHCheckMailboxFunctionIamRole:
-    Description: "Implicit IAM Role created for MESH Check Mailbox function"
-    Value: !GetAtt EmailCareProviderFunctionRole.Arn
-  EmailCareProviderFunction:
-    Description: "Email Care Provider Lambda Function ARN"
-    Value: !GetAtt EmailCareProviderFunction.Arn
-  EmailCareProviderFunctionIamRole:
-    Description: "Implicit IAM Role created for Email Care Provider function"
-    Value: !GetAtt EmailCareProviderFunctionRole.Arn
+    Description: "API Gateway endpoint URL for Prod stage for public functions (/message/hl7v2)"
+    Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  PrivateAPI:
+    Description: "API Gateway endpoint URL for Prod stage for private functions (/subscription/*)"
+    Value: !Sub "https://${APIGatewayInternal}-${vpceId}.execute-api.${AWS::Region}.amazonaws.com/Prod"
   UnprocessedMessageQueueUrl:
     Description: "URL for queue containing messages to be processed"
     Value: !GetAtt UnprocessedMessageQueue.QueueUrl
