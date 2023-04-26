@@ -3,6 +3,7 @@ from typing import Optional
 import requests
 from aws_lambda_powertools import Logger
 
+from email_care_provider.http_adapter import TimeoutHTTPAdapter, DEFAULT_RETRY_STRATEGY
 from email_care_provider.internal_integrations.management_interface.exceptions import (
     CareProviderLocationNotFound,
     ManagementInterfaceNotAvailable,
@@ -24,6 +25,9 @@ class ManagementInterfaceApiClient:
         session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
+        _adapter = TimeoutHTTPAdapter(max_retries=DEFAULT_RETRY_STRATEGY)
+        self.session.mount("http://", _adapter)
+        self.session.mount("https://", _adapter)
         self.base_url: str = base_url or get_management_interface_settings().base_url
 
     def get_care_provider(

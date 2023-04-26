@@ -18,6 +18,7 @@ from subscription_create.external_integrations.pds.schemas import (
     AccessTokenResponse,
 )
 from subscription_create.external_integrations.pds.settings import get_pds_settings
+from subscription_create.http_adapter import TimeoutHTTPAdapter, DEFAULT_RETRY_STRATEGY
 
 _LOGGER = Logger()
 
@@ -29,6 +30,9 @@ class PDSApiClient:
         session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
+        _adapter = TimeoutHTTPAdapter(max_retries=DEFAULT_RETRY_STRATEGY)
+        self.session.mount("http://", _adapter)
+        self.session.mount("https://", _adapter)
         self.base_url: HttpUrl = base_url or get_pds_settings().base_url
         self._access_token: Optional[str] = None
         self._access_token_expires_at: Optional[datetime] = None
