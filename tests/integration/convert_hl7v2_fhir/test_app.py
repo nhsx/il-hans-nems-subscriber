@@ -134,3 +134,5 @@ def test_lambda_handler__missing_admission_time(mocker):
     # then
     assert message["MSA"][0][1][0] == "AR"
     assert message["ERR"][0][3][0] == str(HL7ErrorCode.REQUIRED_FIELD_MISSING.value)
+    assert "Required field was missing" in str(message["ERR"][0])
+    assert "PV1_44" in str(message["ERR"][0])
