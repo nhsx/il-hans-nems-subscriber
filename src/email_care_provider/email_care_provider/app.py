@@ -10,7 +10,7 @@ from email_care_provider.schemas import HANSBundle
 _LOGGER = Logger()
 
 
-@_LOGGER.inject_lambda_context(log_event=True)
+@_LOGGER.inject_lambda_context(log_event=False)
 def lambda_handler(event: dict, context: LambdaContext):
     for queue_message in event["Records"]:
         bundle = HANSBundle.parse_raw(queue_message["body"])
@@ -24,4 +24,4 @@ def lambda_handler(event: dict, context: LambdaContext):
                 admitted_at=bundle.encounter.period.start,
             )
         except MaxRetryError as ex:
-            _LOGGER.exception(ex)
+            _LOGGER.exception(str(ex))

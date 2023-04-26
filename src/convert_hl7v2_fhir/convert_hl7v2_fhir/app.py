@@ -24,6 +24,7 @@ from convert_hl7v2_fhir.internal_integrations.sqs.settings import get_sqs_settin
 _LOGGER = Logger()
 
 
+@_LOGGER.inject_lambda_context(log_event=False)
 def lambda_handler(event: dict, context: LambdaContext):
     body = str(event["body"])
 
@@ -47,7 +48,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             str(ex),
         )
     except InvalidNHSNumberError as ex:
-        _LOGGER.error(ex)
+        _LOGGER.exception(str(ex))
         ack_message = _create_nak(
             er7_message,
             HL7ErrorCode.DATA_TYPE_ERROR,
@@ -55,7 +56,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             "NHS Number in message was invalid",
         )
     except MissingNHSNumberError as ex:
-        _LOGGER.error(ex)
+        _LOGGER.exception(str(ex))
         ack_message = _create_nak(
             er7_message,
             HL7ErrorCode.UNKNOWN_KEY_IDENTIFIER,
@@ -73,7 +74,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         )
 
     except (ClientError, NoRegionError) as ex:
-        _LOGGER.error(ex)
+        _LOGGER.exception(str(ex))
         ack_message = _create_nak(
             er7_message,
             HL7ErrorCode.APPLICATION_INTERNAL_ERROR,
@@ -86,7 +87,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         #  return an ERR response over HL7v2 for all cases
         #  otherwise hospital system will not know we have had
         #  an internal server error - we will log as error though
-        _LOGGER.error(ex)
+        _LOGGER.exception(str(ex))
         ack_message = _create_nak(
             er7_message,
             HL7ErrorCode.APPLICATION_INTERNAL_ERROR,

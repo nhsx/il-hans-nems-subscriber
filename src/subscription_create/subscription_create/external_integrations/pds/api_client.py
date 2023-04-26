@@ -46,11 +46,11 @@ class PDSApiClient:
         response = self.session.get(url=url, headers=headers)
         if response.status_code in range(400, 500):
             operation_outcome = OperationOutcome(**response.json())
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning("get_patient_details, response error", extra={"status_code": response.status_code})
             raise operation_outcome_to_exception(operation_outcome)
 
         if response.status_code >= 500:
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning("get_patient_details, response error", extra={"status_code": response.status_code})
             raise PDSUnavailable
 
         response_json = response.json()
@@ -66,7 +66,7 @@ class PDSApiClient:
         }
         response = self.session.post(url, headers=headers, data=data)
         if response.status_code != 200:
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning("post_oauth2_token, response error", extra={"status_code": response.status_code})
             raise UnknownPDSError
 
         return AccessTokenResponse(**response.json())

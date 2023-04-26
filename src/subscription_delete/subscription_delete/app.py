@@ -8,7 +8,7 @@ from subscription_delete.utils import operation_outcome_lambda_response_factory
 _LOGGER = Logger()
 
 
-@_LOGGER.inject_lambda_context(log_event=True)
+@_LOGGER.inject_lambda_context(log_event=False)
 def lambda_handler(event: dict, context: LambdaContext):
     try:
         UUID(event["pathParameters"]["id"])

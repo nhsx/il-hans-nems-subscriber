@@ -21,7 +21,7 @@ _LOGGER = Logger()
 verify_patient_controller = VerifyPatientController()
 
 
-@_LOGGER.inject_lambda_context(log_event=True)
+@_LOGGER.inject_lambda_context(log_event=False)
 def lambda_handler(event: dict, context: LambdaContext):
     try:
         patient = HANSPatient.parse_raw(event["body"])
@@ -64,7 +64,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             diagnostics="NHS Number did not exist on PDS",
         )
     except (MaxRetryError, InternalError) as ex:
-        _LOGGER.exception(ex)
+        _LOGGER.exception(str(ex))
         return operation_outcome_lambda_response_factory(
             status_code=500,
             severity="error",

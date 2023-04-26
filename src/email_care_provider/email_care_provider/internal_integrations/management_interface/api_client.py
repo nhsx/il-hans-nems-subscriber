@@ -37,11 +37,17 @@ class ManagementInterfaceApiClient:
         data = {"_careRecipientPseudoId": care_recipient_pseudo_id}
         response = self.session.post(url, data=data)
         if response.status_code in range(400, 500):
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning(
+                "get_care_provider, response error",
+                extra={"status_code": response.status_code},
+            )
             raise CareProviderLocationNotFound
 
         if response.status_code >= 500:
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning(
+                "get_care_provider, response error",
+                extra={"status_code": response.status_code},
+            )
             raise ManagementInterfaceNotAvailable
 
         response_json = response.json()
