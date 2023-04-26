@@ -72,6 +72,7 @@ class ER7Extractor:
         return self.er7_message.evn.event_type_code.value
 
     def patient_location(self) -> str:
+        self.er7_message.pv1.validate()
         _poc = self.er7_message.pv1.assigned_patient_location.point_of_care_id.value
         if not _poc:
             raise MissingPointOfCareError
@@ -83,6 +84,7 @@ class ER7Extractor:
         return f"{_poc}, {_facility}"
 
     def patient_class(self) -> str:
+        self.er7_message.pv1.validate()
         _patient_class = self.er7_message.pv1.patient_class.value
         if not _patient_class:
             raise MissingPatientClassError
@@ -90,6 +92,7 @@ class ER7Extractor:
         return self.er7_message.pv1.patient_class.value
 
     def admission_type(self) -> str:
+        self.er7_message.pv1.validate()
         _admission_type = self.er7_message.pv1.admission_type.value
         if not _admission_type:
             raise MissingAdmissionTypeError
@@ -97,6 +100,7 @@ class ER7Extractor:
         return self.er7_message.pv1.admission_type.value
 
     def time_of_admission(self) -> datetime:
+        self.er7_message.pv1.validate()
         _toa = self.er7_message.pv1.admit_date_time.value
         if not _toa:
             raise MissingTimeOfAdmissionError

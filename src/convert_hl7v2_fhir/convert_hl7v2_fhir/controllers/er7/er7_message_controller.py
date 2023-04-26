@@ -1,29 +1,20 @@
-import re
 from typing import Any, Dict, Optional
 from uuid import uuid4, UUID
 
 from fhir.resources.bundle import Bundle
-from hl7 import Message
+from hl7apy.core import Message
 
-from convert_hl7v2_fhir.controllers.hl7.exceptions import (
-    MissingSegmentError,
-    MissingFieldOrComponentError,
-    MissingNHSNumberError,
-    InvalidNHSNumberError,
-)
+from convert_hl7v2_fhir.controllers.er7.er7_extractor import ER7Extractor
 from convert_hl7v2_fhir.controllers.hl7.hl7_conversions import (
-    to_fhir_date,
-    to_fhir_datetime,
     to_fhir_admission_method,
     to_fhir_encounter_class,
 )
-from convert_hl7v2_fhir.controllers.utils import is_nhs_number_valid
 
 
-class HL7MessageController:
+class ER7MessageController:
     def __init__(
         self,
-        hl7_message: Message,
+        er7_message: Message,
         message_header_uuid: Optional[UUID] = None,
         organization_uuid: Optional[UUID] = None,
         encounter_uuid: Optional[UUID] = None,
@@ -31,7 +22,8 @@ class HL7MessageController:
         location_uuid: Optional[UUID] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ):
-        self.hl7_message = hl7_message
+        self.er7_message = er7_message
+        self.extractor = ER7Extractor(er7_message=self.er7_message)
         self.message_header_uuid = message_header_uuid or uuid4()
         self.organization_uuid = organization_uuid or uuid4()
         self.encounter_uuid = encounter_uuid or uuid4()
@@ -70,20 +62,6 @@ class HL7MessageController:
         }
         return Bundle(**bundle_json)
 
-    def _extract_field(self, segment_name: str, *indexes: int) -> str:
-        try:
-            _field = self.hl7_message[segment_name]
-            for index in indexes:
-                _field = _field[index]
-        except KeyError:
-            raise MissingSegmentError(f"Required segment '{segment_name}' was missing.")
-        except IndexError:
-            field_indexes = ".".join(str(i) for i in indexes)
-            raise MissingFieldOrComponentError(
-                f"Required field '{segment_name}.{field_indexes}' was missing."
-            )
-        return str(_field)
-
     def _create_header(self) -> Dict[str, Any]:
         return {
             "fullUrl": f"urn:uuid:{self.message_header_uuid}",
@@ -97,7 +75,7 @@ class HL7MessageController:
                 },
                 "eventCoding": {
                     "system": "http://terminology.hl7.org/CodeSystem/v2-0003",
-                    "code": self._extract_field("EVN", 0, 1),
+                    "code": self.extractor.event_type_code(),
                 },
                 "source": {"endpoint": "http://example.com/fhir/R4"},
                 "responsible": {"reference": f"urn:uuid:{self.organization_uuid}"},
@@ -106,18 +84,6 @@ class HL7MessageController:
         }
 
     def _create_patient(self) -> Dict[str, Any]:
-        nhs_number = self._extract_nhs_number()
-        family_name = self._extract_field("PID", 0, 5, 0, 0)
-        given_name = [
-            name
-            for name in (
-                self._extract_field("PID", 0, 5, 0, 1),
-                self._extract_field("PID", 0, 5, 0, 2),
-            )
-            if name
-        ]
-        birth_date = to_fhir_date(self._extract_field("PID", 0, 7))
-
         return {
             "fullUrl": f"urn:uuid:{self.patient_uuid}",
             "resource": {
@@ -131,7 +97,7 @@ class HL7MessageController:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": nhs_number,
+                        "value": self.extractor.nhs_number(),
                         "extension": [
                             {
                                 "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
@@ -148,20 +114,18 @@ class HL7MessageController:
                         ],
                     }
                 ],
-                "name": [{"use": "usual", "family": family_name, "given": given_name}],
-                "birthDate": birth_date,
+                "name": [
+                    {
+                        "use": "usual",
+                        "family": self.extractor.family_name(),
+                        "given": self.extractor.given_name(),
+                    }
+                ],
+                "birthDate": self.extractor.date_of_birth(),
             },
         }
 
     def _create_location(self):
-        location_name = [
-            name
-            for name in (
-                self._extract_field("PV1", 0, 3, 0, 0),
-                self._extract_field("PV1", 0, 3, 0, 3),
-            )
-            if name
-        ]
         return {
             "fullUrl": f"urn:uuid:{self.location_uuid}",
             "resource": {
@@ -179,9 +143,11 @@ class HL7MessageController:
                     }
                 ],
                 "status": "active",
-                "name": ", ".join(location_name),
+                "name": self.extractor.patient_location(),
                 "address": {
-                    "line": location_name,
+                    "line": [
+                        l.strip() for l in self.extractor.patient_location().split(",")
+                    ],
                     "city": self.metadata["location"]["address"]["city"],
                     "postalCode": self.metadata["location"]["address"]["postalCode"],
                 },
@@ -210,10 +176,9 @@ class HL7MessageController:
         }
 
     def _create_encounter(self):
-        resource_class = to_fhir_encounter_class(self._extract_field("PV1", 0, 2))
-        resource_period_start = to_fhir_datetime(self._extract_field("PV1", 0, 44))
+        resource_class = to_fhir_encounter_class(self.extractor.patient_class())
         admission_method_coding = to_fhir_admission_method(
-            self._extract_field("PV1", 0, 4)
+            self.extractor.admission_type()
         )
         return {
             "fullUrl": f"urn:uuid:{self.encounter_uuid}",
@@ -228,7 +193,7 @@ class HL7MessageController:
                 "status": "in-progress",
                 "subject": {"reference": f"urn:uuid:{self.patient_uuid}"},
                 "class": resource_class,
-                "period": {"start": resource_period_start},
+                "period": {"start": self.extractor.time_of_admission()},
                 "location": [
                     {
                         "status": "active",
@@ -243,20 +208,3 @@ class HL7MessageController:
                 ],
             },
         }
-
-    def _extract_nhs_number(self):
-        pid_segment = self._extract_field("PID")
-        potential_nhs_numbers = set(re.findall(r"\d{10}", pid_segment))
-        if "NHSNMBR" not in pid_segment or not potential_nhs_numbers:
-            raise MissingNHSNumberError
-
-        try:
-            return next(
-                (
-                    potential_nhs_number
-                    for potential_nhs_number in potential_nhs_numbers
-                    if is_nhs_number_valid(potential_nhs_number)
-                )
-            )
-        except StopIteration:
-            raise InvalidNHSNumberError

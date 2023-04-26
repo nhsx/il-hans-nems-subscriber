@@ -1,19 +1,20 @@
-import hl7
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from boto3 import client
 from botocore.exceptions import ClientError, NoRegionError
+from hl7apy.core import Message
+from hl7apy.exceptions import ValidationError
+from hl7apy.parser import parse_message
 
-from convert_hl7v2_fhir.controllers.hl7.hl7_message_controller import (
-    HL7MessageController,
+from convert_hl7v2_fhir.controllers.er7.er7_message_controller import (
+    ER7MessageController,
 )
-from convert_hl7v2_fhir.controllers.hl7.exceptions import (
+from convert_hl7v2_fhir.controllers.er7.exceptions import (
     InvalidNHSNumberError,
     MissingNHSNumberError,
-    MissingFieldOrComponentError,
-    MissingSegmentError,
+    MissingFieldError,
 )
-from convert_hl7v2_fhir.controllers.hl7.hl7_builder import (
+from convert_hl7v2_fhir.controllers.hl7.hl7_ack_builder import (
     generate_ack_message,
     HL7ErrorCode,
     HL7ErrorSeverity,
@@ -28,18 +29,27 @@ def lambda_handler(event: dict, context: LambdaContext):
 
     # hl7 messages expect \r rather than \r\n (and the parsing library)
     #  will reject otherwise (with a KeyError)
-    hl7_message = hl7.parse(body.replace("\n", ""))
+    er7_message = parse_message(body.replace("\n", ""))
 
-    ack_message = _create_ack_message(hl7_message)
+    ack_message = _create_ack_message(er7_message)
 
     try:
-        fhir_bundle = HL7MessageController(hl7_message).to_fhir_bundle()
+        fhir_bundle = ER7MessageController(er7_message).to_fhir_bundle()
         _send_to_sqs(fhir_bundle.json())
         _LOGGER.info("Successfully processed message")
+    except ValidationError as ex:
+        # Malformed message, not adhering to the structures defined by HL7
+        _LOGGER.exception(str(ex))
+        ack_message = _create_nak(
+            er7_message,
+            HL7ErrorCode.SEGMENT_SEQUENCE_ERROR,
+            HL7ErrorSeverity.ERROR,
+            str(ex),
+        )
     except InvalidNHSNumberError as ex:
         _LOGGER.error(ex)
         ack_message = _create_nak(
-            hl7_message,
+            er7_message,
             HL7ErrorCode.DATA_TYPE_ERROR,
             HL7ErrorSeverity.ERROR,
             "NHS Number in message was invalid",
@@ -47,35 +57,30 @@ def lambda_handler(event: dict, context: LambdaContext):
     except MissingNHSNumberError as ex:
         _LOGGER.error(ex)
         ack_message = _create_nak(
-            hl7_message,
+            er7_message,
             HL7ErrorCode.UNKNOWN_KEY_IDENTIFIER,
             HL7ErrorSeverity.ERROR,
             "NHS Number missing from message",
         )
-    except MissingSegmentError as ex:
-        _LOGGER.error(ex)
+
+    except MissingFieldError as ex:
+        _LOGGER.exception(str(ex))
         ack_message = _create_nak(
-            hl7_message,
-            HL7ErrorCode.SEGMENT_SEQUENCE_ERROR,
-            HL7ErrorSeverity.ERROR,
-            "Required segment was missing: " + str(ex),
-        )
-    except MissingFieldOrComponentError as ex:
-        _LOGGER.error(ex)
-        ack_message = _create_nak(
-            hl7_message,
+            er7_message,
             HL7ErrorCode.REQUIRED_FIELD_MISSING,
             HL7ErrorSeverity.ERROR,
-            "Required field was missing: " + str(ex),
+            type(ex).__name__,
         )
+
     except (ClientError, NoRegionError) as ex:
         _LOGGER.error(ex)
         ack_message = _create_nak(
-            hl7_message,
+            er7_message,
             HL7ErrorCode.APPLICATION_INTERNAL_ERROR,
             HL7ErrorSeverity.ERROR,
             "Issue reaching SQS service: " + str(ex),
         )
+
     except Exception as ex:
         # though this is generally bad practice, we need to
         #  return an ERR response over HL7v2 for all cases
@@ -83,7 +88,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         #  an internal server error - we will log as error though
         _LOGGER.error(ex)
         ack_message = _create_nak(
-            hl7_message,
+            er7_message,
             HL7ErrorCode.APPLICATION_INTERNAL_ERROR,
             HL7ErrorSeverity.FATAL_ERROR,
             str(ex),
@@ -103,14 +108,14 @@ def _send_to_sqs(body: str):
 
 
 def _create_nak(
-    hl7_message: hl7.Message,
+    er7_message: Message,
     error_code: HL7ErrorCode,
     error_severity: HL7ErrorSeverity,
     err_msg: str,
 ) -> str:
-    sending_application = hl7_message.extract_field("MSH", 0, 3, 0)
-    sending_facility = hl7_message.extract_field("MSH", 0, 4, 0)
-    msg_control_id = hl7_message.extract_field("MSH", 0, 10, 0)
+    sending_application = er7_message.msh.sending_application.value
+    sending_facility = er7_message.msh.sending_facility.value
+    msg_control_id = er7_message.msh.message_control_id.value
     return generate_ack_message(
         receiving_application=sending_application,
         receiving_facility=sending_facility,
@@ -121,10 +126,10 @@ def _create_nak(
     )
 
 
-def _create_ack_message(hl7_message: hl7.Message) -> str:
-    sending_application = hl7_message.extract_field("MSH", 0, 3, 0)
-    sending_facility = hl7_message.extract_field("MSH", 0, 4, 0)
-    msg_control_id = hl7_message.extract_field("MSH", 0, 10, 0)
+def _create_ack_message(er7_message: Message) -> str:
+    sending_application = er7_message.msh.sending_application.value
+    sending_facility = er7_message.msh.sending_facility.value
+    msg_control_id = er7_message.msh.message_control_id.value
     return generate_ack_message(
         receiving_application=sending_application,
         receiving_facility=sending_facility,
