@@ -14,6 +14,10 @@ class InvalidNHSNumberError(ER7ExtractorError):
     pass
 
 
+class MissingDateOfBirthError(MissingFieldError):
+    pass
+
+
 class MissingPointOfCareError(MissingFieldError):
     pass
 

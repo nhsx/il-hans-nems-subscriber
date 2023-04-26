@@ -13,6 +13,7 @@ from convert_hl7v2_fhir.controllers.er7.exceptions import (
     MissingTimeOfAdmissionError,
     MissingFamilyNameError,
     MissingGivenNameError,
+    MissingDateOfBirthError,
 )
 from convert_hl7v2_fhir.controllers.utils import is_nhs_number_valid
 
@@ -71,6 +72,11 @@ class ER7Extractor:
 
     def date_of_birth(self) -> datetime:
         _dob = self.er7_message.pid.date_of_birth.value
+        if not _dob:
+            raise MissingDateOfBirthError(
+                f"Required field was missing: {self.er7_message.pid.date_of_birth.element_name}"
+            )
+
         date_of_birth, _, utc_offset, _ = hl7apy.utils.get_datetime_info(_dob)
         if not utc_offset:
             return date_of_birth.replace(tzinfo=timezone.utc)
