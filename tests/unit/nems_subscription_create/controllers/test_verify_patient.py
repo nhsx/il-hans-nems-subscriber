@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from fhir.resources.humanname import HumanName
 
-from nems_subscription_create.controllers.verify_patient import VerifyPatientController
+from subscription_create.controllers.verify_patient import VerifyPatientController
 
 
 @pytest.mark.parametrize(

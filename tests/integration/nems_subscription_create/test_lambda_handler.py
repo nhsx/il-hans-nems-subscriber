@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 from pytest_mock import MockFixture
-from nems_subscription_create.app import lambda_handler
+from subscription_create.app import lambda_handler
 
 BROKEN_PATIENTS_TEST_DATA_PATH = "tests/_inputs/broken-patients/"
 VALID_PATIENTS_TEST_DATA_PATH = "tests/_inputs/valid-patients/"

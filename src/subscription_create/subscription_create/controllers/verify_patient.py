@@ -3,15 +3,15 @@ from typing import Optional
 
 from fhir.resources.humanname import HumanName
 
-from nems_subscription_create.controllers.exceptions import (
+from subscription_create.controllers.exceptions import (
     NameMissmatch,
     BirthDateMissmatch,
     IncorrectNHSNumber,
     PatientNotFound,
     InternalError,
 )
-from nems_subscription_create.external_integrations.pds.api_client import PDSApiClient
-from nems_subscription_create.external_integrations.pds.exceptions import (
+from subscription_create.external_integrations.pds.api_client import PDSApiClient
+from subscription_create.external_integrations.pds.exceptions import (
     InvalidNHSNumber,
     MissingNHSNumber,
     PatientDoesNotExist,
