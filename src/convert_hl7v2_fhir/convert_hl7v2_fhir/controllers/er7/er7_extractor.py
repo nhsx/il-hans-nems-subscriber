@@ -46,7 +46,7 @@ class ER7Extractor:
     def family_name(self) -> str:
         _family_name = self.er7_message.pid.patient_name.family_name.value
         if not _family_name:
-            raise MissingFamilyNameError
+            raise MissingFamilyNameError()
 
         return self.er7_message.pid.patient_name.family_name.value
 
@@ -75,11 +75,15 @@ class ER7Extractor:
         self.er7_message.pv1.validate()
         _poc = self.er7_message.pv1.assigned_patient_location.point_of_care_id.value
         if not _poc:
-            raise MissingPointOfCareError
+            raise MissingPointOfCareError(
+                f"Required field was missing: {self.er7_message.pv1.assigned_patient_location.point_of_care_id.element_name}"
+            )
 
         _facility = self.er7_message.pv1.assigned_patient_location.facility_hd.value
         if not _facility:
-            raise MissingFacilityError
+            raise MissingFacilityError(
+                f"Required field was missing: {self.er7_message.pv1.assigned_patient_location.facility_hd.element_name}"
+            )
 
         return f"{_poc}, {_facility}"
 
@@ -103,7 +107,9 @@ class ER7Extractor:
         self.er7_message.pv1.validate()
         _toa = self.er7_message.pv1.admit_date_time.value
         if not _toa:
-            raise MissingTimeOfAdmissionError
+            raise MissingTimeOfAdmissionError(
+                f"Required field was missing: {self.er7_message.pv1.admit_date_time.element_name}"
+            )
 
         time_of_admission, _, utc_offset, _ = hl7apy.utils.get_datetime_info(_toa)
         if not utc_offset:

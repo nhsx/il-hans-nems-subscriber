@@ -69,7 +69,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             er7_message,
             HL7ErrorCode.REQUIRED_FIELD_MISSING,
             HL7ErrorSeverity.ERROR,
-            type(ex).__name__,
+            str(ex),
         )
 
     except (ClientError, NoRegionError) as ex:
