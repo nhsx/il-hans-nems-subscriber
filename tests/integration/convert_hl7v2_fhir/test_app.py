@@ -1,4 +1,5 @@
 from typing import Dict
+from unittest.mock import MagicMock
 
 import hl7
 from convert_hl7v2_fhir.app import lambda_handler
@@ -14,12 +15,12 @@ RAW_HL7_MESSAGE_MISSING_ADMISSION_TIME = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200
 RAW_HL7_MESSAGE_MISSING_FAMILY_NAME = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20230411130643|||C006^Buckley^Mark^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1||9728002378^^^NHSNBR^NHSNMBR||^Miles^Keith^^^^CURRENT||19610608000000|M||||||||||||||||||||||\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^Main Building^5|28b||||||MED|||||||||||||||||||||||||||||||ARRIVED|||20200508130643||"
 RAW_HL7_MESSAGE_MISSING_DATE_OF_BIRTH = "MSH|^~\\&|SIMHOSP|SFAC|RAPP|RFAC|20200508130643||ADT^A01|5|T|2.3|||AL||44|ASCII\rEVN|A01|20230411130643|||C006^Buckley^Mark^^^Dr^^^DRNBR^PRSNL^^^ORGDR|\rPID|1||9728002378^^^NHSNBR^NHSNMBR||PUCKEY^Miles^Keith^^^^CURRENT|||M||||||||||||||||||||||\rPV1|1|I|RenalWard^MainRoom^Bed 1^Simulated Hospital^^BED^Main Building^5|28b||||||MED|||||||||||||||||||||||||||||||ARRIVED|||20200508130643||"
 
-_DUMMY_LAMBDA_CONTEXT = {
-    "function_name": "test",
-    "function_memory_size": "test",
-    "function_arn": "test",
-    "function_request_id": "test",
-}
+_DUMMY_LAMBDA_CONTEXT = MagicMock(
+    function_name="test",
+    function_memory_size="test",
+    function_arn="test",
+    function_request_id="test",
+)
 
 
 def _create_lambda_body(hl7_raw_message: str) -> Dict[str, str]:
