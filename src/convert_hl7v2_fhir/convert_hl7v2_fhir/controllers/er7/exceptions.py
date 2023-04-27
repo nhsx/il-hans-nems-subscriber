@@ -2,7 +2,11 @@ class ER7ExtractorError(Exception):
     pass
 
 
-class MissingNHSNumberError(ER7ExtractorError):
+class MissingFieldError(ER7ExtractorError):
+    pass
+
+
+class MissingNHSNumberError(MissingFieldError):
     pass
 
 
@@ -10,29 +14,33 @@ class InvalidNHSNumberError(ER7ExtractorError):
     pass
 
 
-class MissingPointOfCareError(ER7ExtractorError):
+class MissingDateOfBirthError(MissingFieldError):
     pass
 
 
-class MissingFacilityError(ER7ExtractorError):
+class MissingPointOfCareError(MissingFieldError):
     pass
 
 
-class MissingPatientClassError(ER7ExtractorError):
+class MissingFacilityError(MissingFieldError):
     pass
 
 
-class MissingAdmissionTypeError(ER7ExtractorError):
+class MissingPatientClassError(MissingFieldError):
     pass
 
 
-class MissingTimeOfAdmissionError(ER7ExtractorError):
+class MissingAdmissionTypeError(MissingFieldError):
     pass
 
 
-class MissingFamilyNameError(ER7ExtractorError):
+class MissingTimeOfAdmissionError(MissingFieldError):
     pass
 
 
-class MissingGivenNameError(ER7ExtractorError):
+class MissingFamilyNameError(MissingFieldError):
+    pass
+
+
+class MissingGivenNameError(MissingFieldError):
     pass

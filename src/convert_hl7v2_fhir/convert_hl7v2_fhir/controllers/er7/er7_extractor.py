@@ -13,6 +13,7 @@ from convert_hl7v2_fhir.controllers.er7.exceptions import (
     MissingTimeOfAdmissionError,
     MissingFamilyNameError,
     MissingGivenNameError,
+    MissingDateOfBirthError,
 )
 from convert_hl7v2_fhir.controllers.utils import is_nhs_number_valid
 
@@ -44,9 +45,18 @@ class ER7Extractor:
         raise InvalidNHSNumberError
 
     def family_name(self) -> str:
+        self.er7_message.pid.patient_name.family_name.validate()
         _family_name = self.er7_message.pid.patient_name.family_name.value
         if not _family_name:
-            raise MissingFamilyNameError
+            full_element_name = ".".join(
+                (
+                    self.er7_message.pid.patient_name.element_name,
+                    self.er7_message.pid.patient_name.family_name.element_name,
+                )
+            )
+            raise MissingFamilyNameError(
+                f"Required field was missing: {full_element_name}"
+            )
 
         return self.er7_message.pid.patient_name.family_name.value
 
@@ -62,6 +72,11 @@ class ER7Extractor:
 
     def date_of_birth(self) -> datetime:
         _dob = self.er7_message.pid.date_of_birth.value
+        if not _dob:
+            raise MissingDateOfBirthError(
+                f"Required field was missing: {self.er7_message.pid.date_of_birth.element_name}"
+            )
+
         date_of_birth, _, utc_offset, _ = hl7apy.utils.get_datetime_info(_dob)
         if not utc_offset:
             return date_of_birth.replace(tzinfo=timezone.utc)
@@ -72,17 +87,23 @@ class ER7Extractor:
         return self.er7_message.evn.event_type_code.value
 
     def patient_location(self) -> str:
+        self.er7_message.pv1.validate()
         _poc = self.er7_message.pv1.assigned_patient_location.point_of_care_id.value
         if not _poc:
-            raise MissingPointOfCareError
+            raise MissingPointOfCareError(
+                f"Required field was missing: {self.er7_message.pv1.assigned_patient_location.point_of_care_id.element_name}"
+            )
 
         _facility = self.er7_message.pv1.assigned_patient_location.facility_hd.value
         if not _facility:
-            raise MissingFacilityError
+            raise MissingFacilityError(
+                f"Required field was missing: {self.er7_message.pv1.assigned_patient_location.facility_hd.element_name}"
+            )
 
         return f"{_poc}, {_facility}"
 
     def patient_class(self) -> str:
+        self.er7_message.pv1.validate()
         _patient_class = self.er7_message.pv1.patient_class.value
         if not _patient_class:
             raise MissingPatientClassError
@@ -90,6 +111,7 @@ class ER7Extractor:
         return self.er7_message.pv1.patient_class.value
 
     def admission_type(self) -> str:
+        self.er7_message.pv1.validate()
         _admission_type = self.er7_message.pv1.admission_type.value
         if not _admission_type:
             raise MissingAdmissionTypeError
@@ -97,9 +119,12 @@ class ER7Extractor:
         return self.er7_message.pv1.admission_type.value
 
     def time_of_admission(self) -> datetime:
+        self.er7_message.pv1.validate()
         _toa = self.er7_message.pv1.admit_date_time.value
         if not _toa:
-            raise MissingTimeOfAdmissionError
+            raise MissingTimeOfAdmissionError(
+                f"Required field was missing: {self.er7_message.pv1.admit_date_time.element_name}"
+            )
 
         time_of_admission, _, utc_offset, _ = hl7apy.utils.get_datetime_info(_toa)
         if not utc_offset:

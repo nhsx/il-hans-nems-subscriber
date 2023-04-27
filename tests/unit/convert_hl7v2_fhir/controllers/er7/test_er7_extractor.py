@@ -1,14 +1,12 @@
 import datetime
 
 import pytest
+from hl7apy.exceptions import ValidationError
+
 from convert_hl7v2_fhir.controllers.er7.er7_extractor import ER7Extractor
 from convert_hl7v2_fhir.controllers.er7.exceptions import (
     InvalidNHSNumberError,
     MissingNHSNumberError,
-    ER7ExtractorError,
-    MissingPatientClassError,
-    MissingAdmissionTypeError,
-    MissingTimeOfAdmissionError,
     MissingFamilyNameError,
     MissingGivenNameError,
 )
@@ -65,16 +63,16 @@ def test_er7_extractor__missing_nhs_number():
 def test_er7_extractor__missing_segment():
     extractor = ER7Extractor(er7_message=parse_message(RAW_ER7_MESSAGE_MISSING_SEGMENT))
 
-    with pytest.raises(ER7ExtractorError):
+    with pytest.raises(ValidationError):
         extractor.patient_location()
 
-    with pytest.raises(MissingPatientClassError):
+    with pytest.raises(ValidationError):
         extractor.patient_class()
 
-    with pytest.raises(MissingAdmissionTypeError):
+    with pytest.raises(ValidationError):
         extractor.admission_type()
 
-    with pytest.raises(MissingTimeOfAdmissionError):
+    with pytest.raises(ValidationError):
         extractor.time_of_admission()
 
 
