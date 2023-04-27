@@ -5,16 +5,16 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 from pydantic.env_settings import SettingsError
 
-from nems_subscription_create.controllers.exceptions import (
+from subscription_create.controllers.exceptions import (
     IncorrectNHSNumber,
     PatientNotFound,
     InternalError,
     BirthDateMissmatch,
     NameMissmatch,
 )
-from nems_subscription_create.controllers.verify_patient import VerifyPatientController
-from nems_subscription_create.schemas import HANSPatient
-from nems_subscription_create.utils import operation_outcome_lambda_response_factory
+from subscription_create.controllers.verify_patient import VerifyPatientController
+from subscription_create.schemas import HANSPatient
+from subscription_create.utils import operation_outcome_lambda_response_factory
 
 _LOGGER = Logger()
 verify_patient_controller = VerifyPatientController()

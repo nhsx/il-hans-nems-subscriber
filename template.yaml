@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  nems-subscriber
+  subscriber
 
-  Sample SAM Template for nems-subscriber
+  Sample SAM Template for subscriber
 
 Parameters:
   pdsJwtAud:
@@ -70,17 +70,17 @@ Resources:
         Route53:
           HostedZoneId: !Ref hostedZoneId
       StageName: Prod
-  NEMSSubscriptionCreateFunction:
+  SubscriptionCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/nems_subscription_create
-      Handler: nems_subscription_create.app.lambda_handler
+      CodeUri: src/subscription_create
+      Handler: subscription_create.app.lambda_handler
       Runtime: python3.9
-      Description: Lambda function that creates a NEMS subscription for a given CareRecipient
+      Description: Lambda function that creates a subscription for a given CareRecipient
       Architectures:
         - x86_64
       Events:
-        NEMSSubscriptionCreate:
+        SubscriptionCreate:
           Type: Api
           Properties:
             Path: /subscription
@@ -111,17 +111,17 @@ Resources:
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
-  NEMSSubscriptionDeleteFunction:
+  SubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/nems_subscription_delete
-      Handler: nems_subscription_delete.app.lambda_handler
+      CodeUri: src/subscription_delete
+      Handler: subscription_delete.app.lambda_handler
       Runtime: python3.9
-      Description: Lambda function that deletes a NEMS subscription for a given CareRecipient
+      Description: Lambda function that deletes a subscription for a given CareRecipient
       Architectures:
         - x86_64
       Events:
-        NEMSSubscriptionDelete:
+        SubscriptionDelete:
           Type: Api
           Properties:
             Path: /subscription/{id}
@@ -202,20 +202,20 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ManageAPI:
-    Description: "API Gateway endpoint URL for Prod stage for Create NEMS Subscription function"
+    Description: "API Gateway endpoint URL for Prod stage for Create Subscription function"
     Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod/subscription"
-  NEMSSubscriptionCreateFunction:
-    Description: "NEMS Subscription Create Lambda Function ARN"
-    Value: !GetAtt NEMSSubscriptionCreateFunction.Arn
-  NEMSSubscriptionCreateFunctionIamRole:
-    Description: "Implicit IAM Role created for NEMS Subscription Create function"
-    Value: !GetAtt NEMSSubscriptionCreateFunctionRole.Arn
-  NEMSSubscriptionDeleteFunction:
-    Description: "NEMS Subscription Delete Lambda Function ARN"
-    Value: !GetAtt NEMSSubscriptionDeleteFunction.Arn
-  NEMSSubscriptionDeleteFunctionIamRole:
-    Description: "Implicit IAM Role created for NEMS Subscription Delete function"
-    Value: !GetAtt NEMSSubscriptionDeleteFunctionRole.Arn
+  SubscriptionCreateFunction:
+    Description: "Subscription Create Lambda Function ARN"
+    Value: !GetAtt SubscriptionCreateFunction.Arn
+  SubscriptionCreateFunctionIamRole:
+    Description: "Implicit IAM Role created for Subscription Create function"
+    Value: !GetAtt SubscriptionCreateFunctionRole.Arn
+  SubscriptionDeleteFunction:
+    Description: "Subscription Delete Lambda Function ARN"
+    Value: !GetAtt SubscriptionDeleteFunction.Arn
+  SubscriptionDeleteFunctionIamRole:
+    Description: "Implicit IAM Role created for Subscription Delete function"
+    Value: !GetAtt SubscriptionDeleteFunctionRole.Arn
   MESHCheckMailboxFunction:
     Description: "MESH Check Mailbox Lambda Function ARN"
     Value: !GetAtt EmailCareProviderFunction.Arn
