@@ -2,7 +2,6 @@ from typing import Any, Dict, Optional
 from uuid import uuid4, UUID
 
 from fhir.resources.bundle import Bundle
-from hl7apy.core import Message
 
 from convert_hl7v2_fhir.controllers.er7.er7_extractor import ER7Extractor
 from convert_hl7v2_fhir.controllers.hl7.hl7_conversions import (
@@ -14,7 +13,7 @@ from convert_hl7v2_fhir.controllers.hl7.hl7_conversions import (
 class ER7MessageController:
     def __init__(
         self,
-        er7_message: Message,
+        er7_extractor: ER7Extractor,
         message_header_uuid: Optional[UUID] = None,
         organization_uuid: Optional[UUID] = None,
         encounter_uuid: Optional[UUID] = None,
@@ -22,8 +21,7 @@ class ER7MessageController:
         location_uuid: Optional[UUID] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ):
-        self.er7_message = er7_message
-        self.extractor = ER7Extractor(er7_message=self.er7_message)
+        self.extractor = er7_extractor
         self.message_header_uuid = message_header_uuid or uuid4()
         self.organization_uuid = organization_uuid or uuid4()
         self.encounter_uuid = encounter_uuid or uuid4()

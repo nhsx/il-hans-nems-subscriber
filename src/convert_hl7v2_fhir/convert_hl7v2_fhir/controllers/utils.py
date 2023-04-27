@@ -1,3 +1,6 @@
+from typing import Dict, Any
+
+
 def is_nhs_number_valid(nhs_number: str) -> bool:
     # check length
     if len(nhs_number) != 10:
@@ -18,3 +21,11 @@ def is_nhs_number_valid(nhs_number: str) -> bool:
         calculated_check_digit = 0
 
     return str(calculated_check_digit) == check_digit
+
+
+def hl7v2_lambda_response_factory(body: str) -> Dict[str, Any]:
+    return {
+        "statusCode": 200,
+        "headers": {"content-type": "x-application/hl7-v2+er; charset=utf-8"},
+        "body": body,
+    }

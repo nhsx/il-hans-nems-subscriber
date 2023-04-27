@@ -3,6 +3,8 @@ from enum import Enum, IntEnum
 from typing import Optional
 from uuid import uuid4, UUID
 
+from pydantic import BaseModel
+
 
 class HL7ErrorCode(IntEnum):
     """https://hl7-definition.caristix.com/v2/HL7v2.8/Tables/0357"""
@@ -32,15 +34,19 @@ class HL7ErrorSeverity(str, Enum):
     WARNING = "W"
 
 
+class HL7Error(BaseModel):
+    error_code: HL7ErrorCode
+    error_severity: HL7ErrorSeverity
+    error_message: str
+
+
 def generate_ack_message(
     receiving_application: str,
     receiving_facility: str,
     replying_to_msgid: str,
     care_provider_email: Optional[str] = None,
     care_provider_orgname: Optional[str] = None,
-    hl7_error_code: Optional[HL7ErrorCode] = None,
-    error_severity: Optional[str] = None,
-    error_message: Optional[str] = None,
+    hl7_error: Optional[HL7Error] = None,
 ):
     """https://hl7-definition.caristix.com/v2/HL7v2.8/TriggerEvents/ACK"""
 
@@ -50,11 +56,11 @@ def generate_ack_message(
     segment_zha = ""
     accept_code = ""
 
-    if hl7_error_code:
+    if hl7_error is not None:
         # generate an ACK based on rejecting the message and processing no further
         accept_code = "AR"
         # for ERR layout, see https://hl7-definition.caristix.com/v2/HL7v2.8/Segments/ERR
-        segment_err = f"\rERR|||{hl7_error_code}|{error_severity}||||{error_message}"
+        segment_err = f"\rERR|||{hl7_error.error_code}|{hl7_error.error_severity}||||{hl7_error.error_message}"
     else:
         # generate an ACK based on accepting the message and sending care provider email as response
         accept_code = "AA"
