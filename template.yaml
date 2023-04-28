@@ -11,7 +11,7 @@ Parameters:
     Default: "https://int.api.service.nhs.uk/oauth2/token"
   pdsJwtKid:
     Type: String
-    Default: "int-1"
+    Default: "int-2"
   pdsBaseUrl:
     Type: String
     Default: "https://int.api.service.nhs.uk"
@@ -27,18 +27,18 @@ Parameters:
   secretName:
     Type: String
     Default: "nhs-hans-staging"
+  vpcId:
+    Type: String
+  vpcEndpointId:
+    Type: String
   securityGroupId:
     Type: String
-    Default: "sg-0a1f072bf57882eec"
   subnetId1:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-00b2025c6abdc2a2d"
   subnetId2:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-0a9dbc18bb14863c2"
   subnetId3:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-01deb857ec37e96a4"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -70,6 +70,19 @@ Resources:
         Route53:
           HostedZoneId: !Ref hostedZoneId
       StageName: Prod
+  APIGatewayInternal:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: Domain configure API gateway for internal-only APIs
+      Auth:
+        ResourcePolicy:
+          SourceVpcWhitelist:
+          - !Ref vpcId
+      EndpointConfiguration:
+        Type: PRIVATE
+        VPCEndpointIds:
+          - !Ref vpcEndpointId
+      StageName: Prod
   SubscriptionCreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -85,7 +98,7 @@ Resources:
           Properties:
             Path: /subscription
             Method: post
-            RestApiId: !Ref APIGatewayPublic
+            RestApiId: !Ref APIGatewayInternal
       Environment:
         Variables:
           PDS_JWT_RSA_PRIVATE_KEY: !Join
@@ -126,7 +139,7 @@ Resources:
           Properties:
             Path: /subscription/{id}
             Method: delete
-            RestApiId: !Ref APIGatewayPublic
+            RestApiId: !Ref APIGatewayInternal
   UnprocessedMessageQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -202,32 +215,11 @@ Outputs:
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ManageAPI:
-    Description: "API Gateway endpoint URL for Prod stage for Create Subscription function"
-    Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod/subscription"
-  SubscriptionCreateFunction:
-    Description: "Subscription Create Lambda Function ARN"
-    Value: !GetAtt SubscriptionCreateFunction.Arn
-  SubscriptionCreateFunctionIamRole:
-    Description: "Implicit IAM Role created for Subscription Create function"
-    Value: !GetAtt SubscriptionCreateFunctionRole.Arn
-  SubscriptionDeleteFunction:
-    Description: "Subscription Delete Lambda Function ARN"
-    Value: !GetAtt SubscriptionDeleteFunction.Arn
-  SubscriptionDeleteFunctionIamRole:
-    Description: "Implicit IAM Role created for Subscription Delete function"
-    Value: !GetAtt SubscriptionDeleteFunctionRole.Arn
-  MESHCheckMailboxFunction:
-    Description: "MESH Check Mailbox Lambda Function ARN"
-    Value: !GetAtt EmailCareProviderFunction.Arn
-  MESHCheckMailboxFunctionIamRole:
-    Description: "Implicit IAM Role created for MESH Check Mailbox function"
-    Value: !GetAtt EmailCareProviderFunctionRole.Arn
-  EmailCareProviderFunction:
-    Description: "Email Care Provider Lambda Function ARN"
-    Value: !GetAtt EmailCareProviderFunction.Arn
-  EmailCareProviderFunctionIamRole:
-    Description: "Implicit IAM Role created for Email Care Provider function"
-    Value: !GetAtt EmailCareProviderFunctionRole.Arn
+    Description: "API Gateway endpoint URL for Prod stage for public functions (/message/hl7v2)"
+    Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  PrivateAPI:
+    Description: "API Gateway endpoint URL for Prod stage for private functions (/subscription/*)"
+    Value: !Sub "https://${APIGatewayInternal}-${vpcEndpointId}.execute-api.${AWS::Region}.amazonaws.com/Prod"
   UnprocessedMessageQueueUrl:
     Description: "URL for queue containing messages to be processed"
     Value: !GetAtt UnprocessedMessageQueue.QueueUrl
