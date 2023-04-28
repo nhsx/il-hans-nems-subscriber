@@ -18,6 +18,7 @@ from subscription_create.external_integrations.pds.schemas import (
     AccessTokenResponse,
 )
 from subscription_create.external_integrations.pds.settings import get_pds_settings
+from subscription_create.http_adapter import TimeoutHTTPAdapter, DEFAULT_RETRY_STRATEGY
 
 _LOGGER = Logger()
 
@@ -29,6 +30,9 @@ class PDSApiClient:
         session: Optional[requests.Session] = None,
     ):
         self.session: requests.Session = session or requests.Session()
+        _adapter = TimeoutHTTPAdapter(max_retries=DEFAULT_RETRY_STRATEGY)
+        self.session.mount("http://", _adapter)
+        self.session.mount("https://", _adapter)
         self.base_url: HttpUrl = base_url or get_pds_settings().base_url
         self._access_token: Optional[str] = None
         self._access_token_expires_at: Optional[datetime] = None
@@ -42,11 +46,17 @@ class PDSApiClient:
         response = self.session.get(url=url, headers=headers)
         if response.status_code in range(400, 500):
             operation_outcome = OperationOutcome(**response.json())
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning(
+                "get_patient_details, response error",
+                extra={"status_code": response.status_code},
+            )
             raise operation_outcome_to_exception(operation_outcome)
 
         if response.status_code >= 500:
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning(
+                "get_patient_details, response error",
+                extra={"status_code": response.status_code},
+            )
             raise PDSUnavailable
 
         response_json = response.json()
@@ -62,7 +72,10 @@ class PDSApiClient:
         }
         response = self.session.post(url, headers=headers, data=data)
         if response.status_code != 200:
-            _LOGGER.warning({"response_text": response.text})
+            _LOGGER.warning(
+                "post_oauth2_token, response error",
+                extra={"status_code": response.status_code},
+            )
             raise UnknownPDSError
 
         return AccessTokenResponse(**response.json())

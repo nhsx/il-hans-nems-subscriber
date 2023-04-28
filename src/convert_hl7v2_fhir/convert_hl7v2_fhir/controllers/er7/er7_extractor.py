@@ -133,3 +133,9 @@ class ER7Extractor:
         return time_of_admission.replace(
             tzinfo=datetime.strptime(utc_offset, "%z").tzinfo
         )
+
+    def message_type(self) -> str:
+        return self.er7_message.msh.message_type.message_type.value
+
+    def trigger_event(self) -> str:
+        return self.er7_message.msh.message_type.trigger_event.value

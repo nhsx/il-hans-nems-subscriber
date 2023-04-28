@@ -3,15 +3,15 @@ from typing import Optional
 import requests
 from aws_lambda_powertools import Logger
 
-from email_care_provider.http_adapter import TimeoutHTTPAdapter, DEFAULT_RETRY_STRATEGY
-from email_care_provider.internal_integrations.management_interface.exceptions import (
+from convert_hl7v2_fhir.http_adapter import TimeoutHTTPAdapter, DEFAULT_RETRY_STRATEGY
+from convert_hl7v2_fhir.internal_integrations.management_interface.exceptions import (
     CareProviderLocationNotFound,
     ManagementInterfaceNotAvailable,
 )
-from email_care_provider.internal_integrations.management_interface.schemas import (
+from convert_hl7v2_fhir.internal_integrations.management_interface.schemas import (
     CareProviderResponse,
 )
-from email_care_provider.internal_integrations.management_interface.settings import (
+from convert_hl7v2_fhir.internal_integrations.management_interface.settings import (
     get_management_interface_settings,
 )
 

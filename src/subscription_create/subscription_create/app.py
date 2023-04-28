@@ -4,6 +4,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 from pydantic.env_settings import SettingsError
+from urllib3.exceptions import MaxRetryError
 
 from subscription_create.controllers.exceptions import (
     IncorrectNHSNumber,
@@ -20,7 +21,7 @@ _LOGGER = Logger()
 verify_patient_controller = VerifyPatientController()
 
 
-@_LOGGER.inject_lambda_context(log_event=True)
+@_LOGGER.inject_lambda_context(log_event=False)
 def lambda_handler(event: dict, context: LambdaContext):
     try:
         patient = HANSPatient.parse_raw(event["body"])
@@ -62,7 +63,8 @@ def lambda_handler(event: dict, context: LambdaContext):
             code="not-found",
             diagnostics="NHS Number did not exist on PDS",
         )
-    except InternalError:
+    except (MaxRetryError, InternalError) as ex:
+        _LOGGER.exception(str(ex))
         return operation_outcome_lambda_response_factory(
             status_code=500,
             severity="error",
