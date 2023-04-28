@@ -78,9 +78,6 @@ class ER7Extractor:
             )
 
         date_of_birth, _, utc_offset, _ = hl7apy.utils.get_datetime_info(_dob)
-        if not utc_offset:
-            return date_of_birth.replace(tzinfo=timezone.utc)
-
         return date_of_birth.date()
 
     def event_type_code(self) -> str:
