@@ -70,7 +70,7 @@ class ER7Extractor:
         )
         return [name.strip() for name in _names]
 
-    def date_of_birth(self) -> datetime:
+    def date_of_birth(self) -> date:
         _dob = self.er7_message.pid.date_of_birth.value
         if not _dob:
             raise MissingDateOfBirthError(
@@ -81,7 +81,7 @@ class ER7Extractor:
         if not utc_offset:
             return date_of_birth.replace(tzinfo=timezone.utc)
 
-        return date_of_birth.replace(tzinfo=datetime.strptime(utc_offset, "%z").tzinfo)
+        return date_of_birth.date()
 
     def event_type_code(self) -> str:
         return self.er7_message.evn.event_type_code.value
