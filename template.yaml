@@ -92,6 +92,7 @@ Resources:
       Description: Lambda function that creates a subscription for a given CareRecipient
       Architectures:
         - x86_64
+      MemorySize: 512
       Events:
         SubscriptionCreate:
           Type: Api
@@ -124,6 +125,14 @@ Resources:
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
+          MANAGEMENT_INTERFACE_BASE_URL: !Ref managementInterfaceBaseUrl
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref securityGroupId
+        SubnetIds:
+          - !Ref subnetId1
+          - !Ref subnetId2
+          - !Ref subnetId3
   SubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
