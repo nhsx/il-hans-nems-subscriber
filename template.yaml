@@ -2,9 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   subscriber
-
   Sample SAM Template for subscriber
-
 Parameters:
   pdsJwtAud:
     Type: String
@@ -92,7 +90,6 @@ Resources:
       Description: Lambda function that creates a subscription for a given CareRecipient
       Architectures:
         - x86_64
-      MemorySize: 512
       Events:
         SubscriptionCreate:
           Type: Api
@@ -125,14 +122,6 @@ Resources:
           PDS_JWT_AUD: !Ref pdsJwtAud
           PDS_JWKS_KID: !Ref pdsJwtKid
           PDS_BASE_URL: !Ref pdsBaseUrl
-          MANAGEMENT_INTERFACE_BASE_URL: !Ref managementInterfaceBaseUrl
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref securityGroupId
-        SubnetIds:
-          - !Ref subnetId1
-          - !Ref subnetId2
-          - !Ref subnetId3
   SubscriptionDeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -198,6 +187,7 @@ Resources:
       Description: Lambda function that converts HL7v2 (over HTTPs) to FHIR
       Architectures:
         - x86_64
+      MemorySize: 512
       Events:
         ConvertHL7v2:
           Type: Api
@@ -209,6 +199,14 @@ Resources:
       Environment:
         Variables:
           SQS_CONVERTED_QUEUE_URL: !GetAtt UnprocessedMessageQueue.QueueUrl
+          MANAGEMENT_INTERFACE_BASE_URL: !Ref managementInterfaceBaseUrl
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref securityGroupId
+        SubnetIds:
+          - !Ref subnetId1
+          - !Ref subnetId2
+          - !Ref subnetId3
       Policies:
       - Statement:
         - Sid: AllowQueueSendMessage
