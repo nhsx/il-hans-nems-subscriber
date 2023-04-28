@@ -29,7 +29,7 @@ Parameters:
     Default: "nhs-hans-staging"
   vpcId:
     Type: String
-  vpceId:
+  vpcEndpointId:
     Type: String
   securityGroupId:
     Type: String
@@ -81,7 +81,7 @@ Resources:
       EndpointConfiguration:
         Type: PRIVATE
         VPCEndpointIds:
-          - !Ref vpceId
+          - !Ref vpcEndpointId
       StageName: Prod
   NEMSSubscriptionCreateFunction:
     Type: AWS::Serverless::Function
@@ -219,7 +219,7 @@ Outputs:
     Value: !Sub "https://${APIGatewayPublic}.execute-api.${AWS::Region}.amazonaws.com/Prod"
   PrivateAPI:
     Description: "API Gateway endpoint URL for Prod stage for private functions (/subscription/*)"
-    Value: !Sub "https://${APIGatewayInternal}-${vpceId}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+    Value: !Sub "https://${APIGatewayInternal}-${vpcEndpointId}.execute-api.${AWS::Region}.amazonaws.com/Prod"
   UnprocessedMessageQueueUrl:
     Description: "URL for queue containing messages to be processed"
     Value: !GetAtt UnprocessedMessageQueue.QueueUrl
