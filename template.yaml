@@ -11,7 +11,7 @@ Parameters:
     Default: "https://int.api.service.nhs.uk/oauth2/token"
   pdsJwtKid:
     Type: String
-    Default: "int-1"
+    Default: "int-2"
   pdsBaseUrl:
     Type: String
     Default: "https://int.api.service.nhs.uk"
@@ -29,22 +29,16 @@ Parameters:
     Default: "nhs-hans-staging"
   vpcId:
     Type: String
-    Default: "vpc-00f6ad64b1666d0c4"
   vpceId:
     Type: String
-    Default: "vpce-0e90003d99e557d6f"
   securityGroupId:
     Type: String
-    Default: "sg-0a1f072bf57882eec"
   subnetId1:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-00b2025c6abdc2a2d"
   subnetId2:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-0a9dbc18bb14863c2"
   subnetId3:
     Type: AWS::EC2::Subnet::Id
-    Default: "subnet-01deb857ec37e96a4"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
