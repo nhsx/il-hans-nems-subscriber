@@ -1,6 +1,10 @@
 version: 0.2
 
 phases:
+  pre_build:
+    commands:
+      - echo Downloading samconfig.toml from S3
+      - aws s3 cp "s3://$S3_ARTIFACTS_BUCKET/serverless/samconfig.toml" samconfig.toml
   build:
     commands:
       - echo Build started on `date`
