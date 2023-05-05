@@ -76,14 +76,7 @@ def lambda_handler(event: dict, context: LambdaContext):
             return hl7v2_lambda_response_factory(body=body)
 
         if not _is_patient_added_to_hans(er7_message):
-            body = _create_ack_body(
-                er7_message,
-                HL7Error(
-                    error_code=HL7ErrorCode.APPLICATION_INTERNAL_ERROR,
-                    error_severity=HL7ErrorSeverity.ERROR,
-                    error_message="Message is not from known patient",
-                ),
-            )
+            body = _create_ack_body(er7_message)
             return hl7v2_lambda_response_factory(body=body)
 
         er7_extractor = ER7Extractor(er7_message)
